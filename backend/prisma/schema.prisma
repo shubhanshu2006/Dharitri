@@ -1,0 +1,1321 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ProjectStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+enum ProjectType {
+  HIGHWAY
+  RAILWAY
+  INDUSTRIAL_CORRIDOR
+  IRRIGATION
+  URBAN_DEVELOPMENT
+  RENEWABLE_ENERGY
+  STRATEGIC_INFRASTRUCTURE
+  OTHER
+}
+
+enum ScopeLevel {
+  NATIONAL
+  STATE
+  DISTRICT
+  PROJECT
+  ASSIGNED_CASE
+}
+
+enum VerificationStatus {
+  PENDING
+  IN_PROGRESS
+  PASS
+  FAIL
+  WARNING
+  APPROVED
+  REQUIRES_CORRECTION
+}
+
+enum AcquisitionStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  VERIFICATION_PENDING
+  VERIFIED
+  ACQUISITION_INITIATED
+  NOTIFICATION_STAGE
+  AWARD_STAGE
+  ACQUISITION_COMPLETED
+  ON_HOLD
+  CANCELLED
+}
+
+enum CompensationStatus {
+  DRAFT
+  UNDER_REVIEW
+  CORRECTION_REQUIRED
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+enum PaymentStatus {
+  NOT_INITIATED
+  INITIATED
+  PROCESSING
+  CREDITED
+  FAILED
+  RETURNED
+  REJECTED
+  CORRECTION_REQUIRED
+}
+
+enum BeneficiaryVerificationStatus {
+  NOT_STARTED
+  PENDING
+  VERIFIED
+  FAILED
+  REQUIRES_CORRECTION
+}
+
+enum RRStatus {
+  NOT_STARTED
+  APPLICABILITY_REVIEW
+  ASSESSMENT
+  APPROVAL_PENDING
+  APPROVED
+  PROVISION_IN_PROGRESS
+  FIELD_VERIFICATION
+  COMPLETED
+  DISPUTED
+  ON_HOLD
+}
+
+enum PossessionStatus {
+  PENDING
+  NOTICE_ISSUED
+  READY
+  RECORDED
+  DISPUTED
+  REJECTED
+}
+
+enum DocumentStatus {
+  ACTIVE
+  SUPERSEDED
+  ARCHIVED
+  RESTRICTED
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+  READ
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+  INSUFFICIENT_DATA
+}
+
+enum FieldVisitStatus {
+  DRAFT
+  IN_PROGRESS
+  SUBMITTED
+  VERIFIED
+  REQUIRES_CORRECTION
+}
+
+enum ChecklistStatus {
+  PENDING
+  PASS
+  FAIL
+  NOT_APPLICABLE
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  SMS
+  PUSH
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AlertStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+enum IntegrationSyncStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  RETRYING
+}
+
+enum IntegrationEventStatus {
+  RECEIVED
+  PROCESSING
+  PROCESSED
+  FAILED
+}
+
+enum GrievanceStatus {
+  OPEN
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+  CLOSED
+}
+
+enum DepartmentType {
+  MINISTRY
+  STATE_DEPARTMENT
+  DISTRICT_OFFICE
+  IMPLEMENTING_AGENCY
+  OTHER
+}
+
+enum WorkflowEntityType {
+  PROJECT
+  ACQUISITION_CASE
+  COMPENSATION
+  PAYMENT
+  BENEFICIARY
+  RR_CASE
+  POSSESSION
+}
+
+enum RiskEntityType {
+  PROJECT
+  ACQUISITION_PARCEL
+  ACQUISITION_CASE
+  COMPENSATION
+  PAYMENT
+  RR_CASE
+}
+
+enum DocumentAccessClass {
+  PUBLIC
+  INTERNAL
+  RESTRICTED
+  SENSITIVE
+}
+
+model State {
+  id        String   @id @default(uuid()) @db.Uuid
+  code      String   @unique @db.VarChar(32)
+  name      String   @db.VarChar(160)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  districts   District[]
+  projects    Project[]
+  parcels     CadastralParcel[]
+  scopes      UserScope[]
+  departments Department[]
+
+  @@index([name])
+}
+
+model District {
+  id        String   @id @default(uuid()) @db.Uuid
+  stateId   String   @db.Uuid
+  code      String   @db.VarChar(32)
+  name      String   @db.VarChar(160)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  state       State             @relation(fields: [stateId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  tehsils     Tehsil[]
+  projects    Project[]
+  parcels     CadastralParcel[]
+  scopes      UserScope[]
+  departments Department[]
+
+  @@unique([stateId, code])
+  @@index([stateId])
+  @@index([name])
+}
+
+model Tehsil {
+  id         String   @id @default(uuid()) @db.Uuid
+  districtId String   @db.Uuid
+  code       String   @db.VarChar(32)
+  name       String   @db.VarChar(160)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @db.Timestamptz(6)
+
+  district District          @relation(fields: [districtId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  villages Village[]
+  parcels  CadastralParcel[]
+
+  @@unique([districtId, code])
+  @@index([districtId])
+  @@index([name])
+}
+
+model Village {
+  id        String   @id @default(uuid()) @db.Uuid
+  tehsilId  String   @db.Uuid
+  code      String   @db.VarChar(32)
+  name      String   @db.VarChar(160)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  tehsil  Tehsil            @relation(fields: [tehsilId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  parcels CadastralParcel[]
+
+  @@unique([tehsilId, code])
+  @@index([tehsilId])
+  @@index([name])
+}
+
+model User {
+  id          String   @id @default(uuid()) @db.Uuid
+  clerkUserId String   @unique @db.VarChar(255)
+  name        String   @db.VarChar(200)
+  email       String   @db.VarChar(320)
+  phone       String?  @db.VarChar(32)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+
+  roles                      UserRole[]
+  scopes                     UserScope[]
+  projectMembers             ProjectMember[]
+  assignedAcquisitions       AcquisitionCase[]          @relation("AcquisitionAssignee")
+  assignedAcquisitionParcels AcquisitionParcel[]        @relation("AcquisitionParcelAssignee")
+  verificationAssignments    VerificationCase[]         @relation("VerificationAssignee")
+  fieldVisits                FieldVisit[]
+  notifications              Notification[]
+  auditEvents                AuditEvent[]               @relation("AuditActor")
+  resolvedAlerts             Alert[]                    @relation("AlertResolver")
+  resolvedAnomalies          AnomalyEvent[]             @relation("AnomalyResolver")
+  resolvedGrievances         Grievance[]                @relation("GrievanceResolver")
+  assignedGrievances         Grievance[]                @relation("GrievanceAssignee")
+  createdProjects            Project[]                  @relation("ProjectCreator")
+  compensationAssessments    CompensationAssessment[]   @relation("CompensationAssessor")
+  compensationApprovals      CompensationAssessment[]   @relation("CompensationApprover")
+  compensationAwards         CompensationAward[]        @relation("AwardApprover")
+  possessionRecords          PossessionRecord[]         @relation("PossessionRecorder")
+  possessionChecklistItems   PossessionChecklistItem[]  @relation("PossessionChecklistCompleter")
+  documentVersions           DocumentVersion[]          @relation("DocumentVersionUploader")
+  documents                  Document[]                 @relation("DocumentUploader")
+  workflowTransitions        WorkflowTransitionRecord[] @relation("WorkflowActor")
+  rrCasesApproved            RRCase[]                   @relation("RRApprover")
+  rrCasesCompleted           RRCase[]                   @relation("RRCompleter")
+  beneficiariesCreated       Beneficiary[]              @relation("BeneficiaryCreator")
+  grievanceSubmissions       Grievance[]                @relation("GrievanceSubmitter")
+}
+
+model Role {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique @db.VarChar(64)
+  name        String   @db.VarChar(120)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+
+  users       UserRole[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique @db.VarChar(100)
+  name        String   @db.VarChar(160)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+
+  roles RolePermission[]
+}
+
+model UserRole {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  roleId    String   @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([userId, roleId])
+  @@index([roleId])
+}
+
+model RolePermission {
+  id           String @id @default(uuid()) @db.Uuid
+  roleId       String @db.Uuid
+  permissionId String @db.Uuid
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([permissionId])
+}
+
+model UserScope {
+  id             String     @id @default(uuid()) @db.Uuid
+  userId         String     @db.Uuid
+  scopeLevel     ScopeLevel
+  stateId        String?    @db.Uuid
+  districtId     String?    @db.Uuid
+  projectId      String?    @db.Uuid
+  assignedCaseId String?    @db.Uuid
+  createdAt      DateTime   @default(now()) @db.Timestamptz(6)
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  state    State?    @relation(fields: [stateId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  district District? @relation(fields: [districtId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  project  Project?  @relation(fields: [projectId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([userId])
+  @@index([scopeLevel])
+  @@index([stateId])
+  @@index([districtId])
+  @@index([projectId])
+  @@index([assignedCaseId])
+}
+
+model Department {
+  id         String         @id @default(uuid()) @db.Uuid
+  name       String         @db.VarChar(200)
+  code       String         @unique @db.VarChar(64)
+  type       DepartmentType
+  stateId    String?        @db.Uuid
+  districtId String?        @db.Uuid
+  isActive   Boolean        @default(true)
+  createdAt  DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime       @updatedAt @db.Timestamptz(6)
+
+  state              State?    @relation(fields: [stateId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  district           District? @relation(fields: [districtId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  projectsAsAgency   Project[] @relation("ImplementingAgency")
+  projectsAsMinistry Project[] @relation("Ministry")
+}
+
+model Project {
+  id                   String        @id @default(uuid()) @db.Uuid
+  projectCode          String        @unique @db.VarChar(64)
+  name                 String        @db.VarChar(240)
+  projectType          ProjectType
+  description          String?       @db.Text
+  status               ProjectStatus @default(DRAFT)
+  implementingAgencyId String?       @db.Uuid
+  ministryId           String?       @db.Uuid
+  stateId              String        @db.Uuid
+  districtId           String?       @db.Uuid
+  createdById          String        @db.Uuid
+  createdAt            DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt            DateTime      @updatedAt @db.Timestamptz(6)
+
+  implementingAgency Department? @relation("ImplementingAgency", fields: [implementingAgencyId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  ministry           Department? @relation("Ministry", fields: [ministryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  state              State       @relation(fields: [stateId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  district           District?   @relation(fields: [districtId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  createdBy          User        @relation("ProjectCreator", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  boundary           ProjectBoundary?
+  milestones         ProjectMilestone[]
+  members            ProjectMember[]
+  landRequirements   LandRequirement[]
+  acquisitionParcels AcquisitionParcel[]
+  scopes             UserScope[]
+  rrCases            RRCase[]
+  fieldVisits        FieldVisit[]
+  alerts             Alert[]
+  grievances         Grievance[]
+
+  @@index([status])
+  @@index([stateId])
+  @@index([districtId])
+  @@index([projectType])
+  @@index([createdAt])
+}
+
+model ProjectMember {
+  id        String   @id @default(uuid()) @db.Uuid
+  projectId String   @db.Uuid
+  userId    String   @db.Uuid
+  role      String   @db.VarChar(80)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([userId])
+}
+
+model ProjectBoundary {
+  id             String                   @id @default(uuid()) @db.Uuid
+  projectId      String                   @unique @db.Uuid
+  sourceType     String                   @db.VarChar(64)
+  sourceSystem   String?                  @db.VarChar(120)
+  sourceRecordId String?                  @db.VarChar(255)
+  geometry       Unsupported("geometry")?
+  srid           Int
+  areaSqMeters   Decimal                  @db.Decimal(18, 4)
+  geometryHash   String?                  @db.VarChar(128)
+  createdAt      DateTime                 @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime                 @updatedAt @db.Timestamptz(6)
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([sourceSystem, sourceRecordId])
+}
+
+model ProjectMilestone {
+  id          String    @id @default(uuid()) @db.Uuid
+  projectId   String    @db.Uuid
+  name        String    @db.VarChar(160)
+  description String?   @db.Text
+  dueDate     DateTime? @db.Timestamptz(6)
+  completedAt DateTime? @db.Timestamptz(6)
+  status      String    @db.VarChar(64)
+  sequence    Int
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @db.Timestamptz(6)
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([projectId, status])
+  @@index([projectId, dueDate])
+}
+
+model LandRequirement {
+  id                   String   @id @default(uuid()) @db.Uuid
+  projectId            String   @db.Uuid
+  requiredAreaSqMeters Decimal  @db.Decimal(18, 4)
+  landCategory         String?  @db.VarChar(120)
+  description          String?  @db.Text
+  createdAt            DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt            DateTime @updatedAt @db.Timestamptz(6)
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([projectId])
+}
+
+model CadastralParcel {
+  id                String                   @id @default(uuid()) @db.Uuid
+  parcelReference   String                   @unique @db.VarChar(160)
+  ulpin             String?                  @db.VarChar(128)
+  surveyNumber      String?                  @db.VarChar(128)
+  subDivisionNumber String?                  @db.VarChar(128)
+  stateId           String                   @db.Uuid
+  districtId        String                   @db.Uuid
+  tehsilId          String?                  @db.Uuid
+  villageId         String?                  @db.Uuid
+  areaSqMeters      Decimal                  @db.Decimal(18, 4)
+  landCategory      String?                  @db.VarChar(120)
+  geometrySourceId  String?                  @db.Uuid
+  geometry          Unsupported("geometry")?
+  sourceSystem      String?                  @db.VarChar(120)
+  sourceRecordId    String?                  @db.VarChar(255)
+  sourceRetrievedAt DateTime?                @db.Timestamptz(6)
+  createdAt         DateTime                 @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime                 @updatedAt @db.Timestamptz(6)
+
+  state              State                  @relation(fields: [stateId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  district           District               @relation(fields: [districtId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  tehsil             Tehsil?                @relation(fields: [tehsilId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  village            Village?               @relation(fields: [villageId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  geometrySource     ParcelGeometrySource?  @relation("CurrentGeometrySource", fields: [geometrySourceId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  geometrySources    ParcelGeometrySource[] @relation("ParcelGeometryHistory")
+  landRecords        LandRecordReference[]
+  acquisitionParcels AcquisitionParcel[]
+
+  @@index([ulpin])
+  @@index([surveyNumber])
+  @@index([villageId])
+  @@index([districtId])
+  @@index([sourceSystem, sourceRecordId])
+}
+
+model ParcelGeometrySource {
+  id                String                   @id @default(uuid()) @db.Uuid
+  cadastralParcelId String                   @db.Uuid
+  sourceSystem      String                   @db.VarChar(120)
+  sourceRecordId    String                   @db.VarChar(255)
+  geometry          Unsupported("geometry")?
+  srid              Int
+  retrievedAt       DateTime                 @db.Timestamptz(6)
+  isCurrent         Boolean                  @default(false)
+  createdAt         DateTime                 @default(now()) @db.Timestamptz(6)
+
+  cadastralParcel CadastralParcel   @relation("ParcelGeometryHistory", fields: [cadastralParcelId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  currentFor      CadastralParcel[] @relation("CurrentGeometrySource")
+
+  @@index([cadastralParcelId, isCurrent])
+  @@index([sourceSystem, sourceRecordId])
+}
+
+model LandRecordReference {
+  id                String   @id @default(uuid()) @db.Uuid
+  cadastralParcelId String   @db.Uuid
+  sourceSystem      String   @db.VarChar(120)
+  sourceRecordId    String   @db.VarChar(255)
+  parcelReference   String   @db.VarChar(160)
+  surveyNumber      String?  @db.VarChar(128)
+  ulpin             String?  @db.VarChar(128)
+  recordStatus      String?  @db.VarChar(80)
+  recordVersion     String?  @db.VarChar(80)
+  retrievedAt       DateTime @db.Timestamptz(6)
+  rawPayloadHash    String?  @db.VarChar(128)
+  normalizedPayload Json
+  createdAt         DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime @updatedAt @db.Timestamptz(6)
+
+  cadastralParcel CadastralParcel @relation(fields: [cadastralParcelId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([sourceSystem, sourceRecordId])
+  @@index([cadastralParcelId])
+  @@index([ulpin])
+}
+
+model AcquisitionParcel {
+  id                   String                   @id @default(uuid()) @db.Uuid
+  projectId            String                   @db.Uuid
+  cadastralParcelId    String                   @db.Uuid
+  acquisitionReference String                   @unique @db.VarChar(160)
+  requiredAreaSqMeters Decimal                  @db.Decimal(18, 4)
+  acquisitionGeometry  Unsupported("geometry")?
+  geometryAreaSqMeters Decimal?                 @db.Decimal(18, 4)
+  landCategory         String?                  @db.VarChar(120)
+  status               AcquisitionStatus        @default(DRAFT)
+  currentAssigneeId    String?                  @db.Uuid
+  createdAt            DateTime                 @default(now()) @db.Timestamptz(6)
+  updatedAt            DateTime                 @updatedAt @db.Timestamptz(6)
+
+  project         Project          @relation(fields: [projectId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  cadastralParcel CadastralParcel  @relation(fields: [cadastralParcelId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  currentAssignee User?            @relation("AcquisitionParcelAssignee", fields: [currentAssigneeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  acquisitionCase AcquisitionCase?
+
+  @@unique([projectId, cadastralParcelId, acquisitionReference])
+  @@index([projectId])
+  @@index([cadastralParcelId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model AcquisitionCase {
+  id                  String            @id @default(uuid()) @db.Uuid
+  acquisitionParcelId String            @unique @db.Uuid
+  status              AcquisitionStatus @default(DRAFT)
+  currentAssigneeId   String?           @db.Uuid
+  createdAt           DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime          @updatedAt @db.Timestamptz(6)
+
+  acquisitionParcel AcquisitionParcel @relation(fields: [acquisitionParcelId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  currentAssignee   User?             @relation("AcquisitionAssignee", fields: [currentAssigneeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  verificationCases       VerificationCase[]
+  compensationAssessments CompensationAssessment[]
+  paymentTransactions     PaymentTransaction[]
+  rrCases                 RRCase[]
+  possessionRecords       PossessionRecord[]
+  fieldVisits             FieldVisit[]
+  alerts                  Alert[]
+  grievances              Grievance[]
+
+  @@index([status])
+  @@index([currentAssigneeId])
+}
+
+model VerificationCase {
+  id                String             @id @default(uuid()) @db.Uuid
+  acquisitionCaseId String             @db.Uuid
+  status            VerificationStatus @default(PENDING)
+  startedAt         DateTime?          @db.Timestamptz(6)
+  completedAt       DateTime?          @db.Timestamptz(6)
+  assignedUserId    String?            @db.Uuid
+  createdAt         DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime           @updatedAt @db.Timestamptz(6)
+
+  acquisitionCase AcquisitionCase      @relation(fields: [acquisitionCaseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  assignedUser    User?                @relation("VerificationAssignee", fields: [assignedUserId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  results         VerificationResult[]
+
+  @@index([acquisitionCaseId])
+  @@index([status])
+  @@index([assignedUserId])
+}
+
+model VerificationResult {
+  id                 String             @id @default(uuid()) @db.Uuid
+  verificationCaseId String             @db.Uuid
+  checkName          String             @db.VarChar(160)
+  status             VerificationStatus
+  severity           String?            @db.VarChar(40)
+  source             String             @db.VarChar(120)
+  message            String             @db.Text
+  evidenceDocumentId String?            @db.Uuid
+  checkedAt          DateTime           @db.Timestamptz(6)
+  ruleVersion        String             @db.VarChar(80)
+  createdAt          DateTime           @default(now()) @db.Timestamptz(6)
+
+  verificationCase VerificationCase @relation(fields: [verificationCaseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  evidenceDocument Document?        @relation("VerificationEvidence", fields: [evidenceDocumentId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([verificationCaseId])
+  @@index([status])
+  @@index([severity])
+}
+
+model WorkflowDefinition {
+  id         String             @id @default(uuid()) @db.Uuid
+  entityType WorkflowEntityType
+  name       String             @db.VarChar(160)
+  version    Int
+  isActive   Boolean            @default(true)
+  createdAt  DateTime           @default(now()) @db.Timestamptz(6)
+
+  states      WorkflowState[]
+  transitions WorkflowTransition[]
+  instances   WorkflowInstance[]
+
+  @@unique([entityType, version])
+}
+
+model WorkflowState {
+  id                   String  @id @default(uuid()) @db.Uuid
+  workflowDefinitionId String  @db.Uuid
+  code                 String  @db.VarChar(80)
+  name                 String  @db.VarChar(160)
+  isInitial            Boolean @default(false)
+  isTerminal           Boolean @default(false)
+
+  workflowDefinition WorkflowDefinition @relation(fields: [workflowDefinitionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([workflowDefinitionId, code])
+}
+
+model WorkflowTransition {
+  id                   String   @id @default(uuid()) @db.Uuid
+  workflowDefinitionId String   @db.Uuid
+  fromState            String   @db.VarChar(80)
+  toState              String   @db.VarChar(80)
+  requiredPermission   String   @db.VarChar(100)
+  requiresReason       Boolean  @default(false)
+  createdAt            DateTime @default(now()) @db.Timestamptz(6)
+
+  workflowDefinition WorkflowDefinition @relation(fields: [workflowDefinitionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([workflowDefinitionId, fromState, toState])
+}
+
+model WorkflowInstance {
+  id                   String             @id @default(uuid()) @db.Uuid
+  workflowDefinitionId String             @db.Uuid
+  entityType           WorkflowEntityType
+  entityId             String             @db.Uuid
+  currentState         String             @db.VarChar(80)
+  createdAt            DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt            DateTime           @updatedAt @db.Timestamptz(6)
+
+  workflowDefinition WorkflowDefinition         @relation(fields: [workflowDefinitionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  transitionRecords  WorkflowTransitionRecord[]
+
+  @@index([entityType, entityId])
+}
+
+model WorkflowTransitionRecord {
+  id                 String   @id @default(uuid()) @db.Uuid
+  workflowInstanceId String   @db.Uuid
+  fromState          String   @db.VarChar(80)
+  toState            String   @db.VarChar(80)
+  actorId            String   @db.Uuid
+  reason             String?  @db.Text
+  createdAt          DateTime @default(now()) @db.Timestamptz(6)
+
+  workflowInstance WorkflowInstance @relation(fields: [workflowInstanceId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  actor            User             @relation("WorkflowActor", fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([workflowInstanceId, createdAt])
+  @@index([actorId])
+}
+
+model CompensationRuleSet {
+  id            String    @id @default(uuid()) @db.Uuid
+  name          String    @db.VarChar(160)
+  version       Int
+  effectiveFrom DateTime  @db.Timestamptz(6)
+  effectiveTo   DateTime? @db.Timestamptz(6)
+  configuration Json
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now()) @db.Timestamptz(6)
+
+  assessments CompensationAssessment[]
+
+  @@unique([name, version])
+}
+
+model CompensationAssessment {
+  id                String             @id @default(uuid()) @db.Uuid
+  acquisitionCaseId String             @db.Uuid
+  ruleSetId         String             @db.Uuid
+  landValue         Decimal            @db.Decimal(20, 2)
+  solatium          Decimal            @db.Decimal(20, 2)
+  interest          Decimal            @db.Decimal(20, 2)
+  otherComponents   Decimal            @db.Decimal(20, 2)
+  deductions        Decimal            @db.Decimal(20, 2)
+  totalAmount       Decimal            @db.Decimal(20, 2)
+  status            CompensationStatus @default(DRAFT)
+  assessedById      String             @db.Uuid
+  assessedAt        DateTime           @db.Timestamptz(6)
+  approvedById      String?            @db.Uuid
+  approvedAt        DateTime?          @db.Timestamptz(6)
+  createdAt         DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime           @updatedAt @db.Timestamptz(6)
+
+  acquisitionCase AcquisitionCase     @relation(fields: [acquisitionCaseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  ruleSet         CompensationRuleSet @relation(fields: [ruleSetId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  assessedBy      User                @relation("CompensationAssessor", fields: [assessedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  approvedBy      User?               @relation("CompensationApprover", fields: [approvedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  award           CompensationAward?
+
+  @@index([acquisitionCaseId, status])
+  @@index([ruleSetId])
+}
+
+model CompensationAward {
+  id            String             @id @default(uuid()) @db.Uuid
+  assessmentId  String             @unique @db.Uuid
+  awardNumber   String             @unique @db.VarChar(100)
+  awardedAmount Decimal            @db.Decimal(20, 2)
+  status        CompensationStatus
+  approvedById  String             @db.Uuid
+  approvedAt    DateTime           @db.Timestamptz(6)
+  createdAt     DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime           @updatedAt @db.Timestamptz(6)
+
+  assessment CompensationAssessment @relation(fields: [assessmentId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  approvedBy User                   @relation("AwardApprover", fields: [approvedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  payments   PaymentTransaction[]
+
+  @@index([approvedById])
+}
+
+model Beneficiary {
+  id                 String                        @id @default(uuid()) @db.Uuid
+  displayName        String                        @db.VarChar(200)
+  externalReference  String?                       @db.VarChar(255)
+  verificationStatus BeneficiaryVerificationStatus @default(NOT_STARTED)
+  createdById        String?                       @db.Uuid
+  createdAt          DateTime                      @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime                      @updatedAt @db.Timestamptz(6)
+
+  createdBy      User?                     @relation("BeneficiaryCreator", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  verifications  BeneficiaryVerification[]
+  affectedPeople AffectedPerson[]
+  families       AffectedFamily[]
+  payments       PaymentTransaction[]
+  grievances     Grievance[]
+
+  @@index([verificationStatus])
+  @@index([externalReference])
+}
+
+model AffectedPerson {
+  id            String   @id @default(uuid()) @db.Uuid
+  beneficiaryId String?  @db.Uuid
+  displayName   String   @db.VarChar(200)
+  relationship  String?  @db.VarChar(120)
+  isDisplaced   Boolean  @default(false)
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @db.Timestamptz(6)
+
+  beneficiary   Beneficiary?   @relation(fields: [beneficiaryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  familyMembers FamilyMember[]
+
+  @@index([beneficiaryId])
+}
+
+model AffectedFamily {
+  id                   String   @id @default(uuid()) @db.Uuid
+  primaryBeneficiaryId String?  @db.Uuid
+  familyReference      String   @unique @db.VarChar(120)
+  isAffected           Boolean  @default(false)
+  isDisplaced          Boolean  @default(false)
+  createdAt            DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt            DateTime @updatedAt @db.Timestamptz(6)
+
+  primaryBeneficiary Beneficiary?   @relation(fields: [primaryBeneficiaryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  members            FamilyMember[]
+  rrCases            RRCase[]
+
+  @@index([primaryBeneficiaryId])
+}
+
+model FamilyMember {
+  id               String   @id @default(uuid()) @db.Uuid
+  familyId         String   @db.Uuid
+  affectedPersonId String   @db.Uuid
+  createdAt        DateTime @default(now()) @db.Timestamptz(6)
+
+  family         AffectedFamily @relation(fields: [familyId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  affectedPerson AffectedPerson @relation(fields: [affectedPersonId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([familyId, affectedPersonId])
+}
+
+model BeneficiaryVerification {
+  id                String                        @id @default(uuid()) @db.Uuid
+  beneficiaryId     String                        @db.Uuid
+  status            BeneficiaryVerificationStatus @default(PENDING)
+  provider          String                        @db.VarChar(120)
+  providerReference String?                       @db.VarChar(255)
+  verifiedAt        DateTime?                     @db.Timestamptz(6)
+  failureReason     String?                       @db.Text
+  metadata          Json?
+  createdAt         DateTime                      @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime                      @updatedAt @db.Timestamptz(6)
+
+  beneficiary Beneficiary @relation(fields: [beneficiaryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([beneficiaryId])
+  @@index([status])
+}
+
+model PaymentTransaction {
+  id                 String        @id @default(uuid()) @db.Uuid
+  awardId            String        @db.Uuid
+  beneficiaryId      String        @db.Uuid
+  acquisitionCaseId  String?       @db.Uuid
+  amount             Decimal       @db.Decimal(20, 2)
+  currency           String        @default("INR") @db.Char(3)
+  status             PaymentStatus @default(NOT_INITIATED)
+  externalReference  String?       @db.VarChar(255)
+  provider           String        @db.VarChar(120)
+  idempotencyKey     String        @unique @db.VarChar(255)
+  failureReason      String?       @db.Text
+  initiatedAt        DateTime?     @db.Timestamptz(6)
+  creditedAt         DateTime?     @db.Timestamptz(6)
+  lastProviderSyncAt DateTime?     @db.Timestamptz(6)
+  createdAt          DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime      @updatedAt @db.Timestamptz(6)
+
+  award           CompensationAward @relation(fields: [awardId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  beneficiary     Beneficiary       @relation(fields: [beneficiaryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  acquisitionCase AcquisitionCase?  @relation(fields: [acquisitionCaseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([awardId])
+  @@index([beneficiaryId])
+  @@index([acquisitionCaseId])
+  @@index([status])
+  @@index([externalReference])
+}
+
+model RRCase {
+  id                    String    @id @default(uuid()) @db.Uuid
+  projectId             String    @db.Uuid
+  acquisitionCaseId     String?   @db.Uuid
+  familyId              String    @db.Uuid
+  status                RRStatus  @default(NOT_STARTED)
+  applicable            Boolean   @default(false)
+  assessmentCompletedAt DateTime? @db.Timestamptz(6)
+  approvedAt            DateTime? @db.Timestamptz(6)
+  completedAt           DateTime? @db.Timestamptz(6)
+  approvedById          String?   @db.Uuid
+  completedById         String?   @db.Uuid
+  createdAt             DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt             DateTime  @updatedAt @db.Timestamptz(6)
+
+  project         Project          @relation(fields: [projectId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  acquisitionCase AcquisitionCase? @relation(fields: [acquisitionCaseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  family          AffectedFamily   @relation(fields: [familyId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  approvedBy      User?            @relation("RRApprover", fields: [approvedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  completedBy     User?            @relation("RRCompleter", fields: [completedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  entitlements    RREntitlement[]
+
+  @@index([projectId, status])
+  @@index([familyId])
+  @@index([acquisitionCaseId])
+}
+
+model RREntitlement {
+  id              String    @id @default(uuid()) @db.Uuid
+  rrCaseId        String    @db.Uuid
+  entitlementType String    @db.VarChar(120)
+  assessedValue   Json
+  approvedValue   Json?
+  providedValue   Json?
+  status          String    @db.VarChar(64)
+  verifiedAt      DateTime? @db.Timestamptz(6)
+  completedAt     DateTime? @db.Timestamptz(6)
+  createdAt       DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @db.Timestamptz(6)
+
+  rrCase RRCase @relation(fields: [rrCaseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([rrCaseId, status])
+}
+
+model PossessionRecord {
+  id                String           @id @default(uuid()) @db.Uuid
+  acquisitionCaseId String           @db.Uuid
+  status            PossessionStatus @default(PENDING)
+  possessionDate    DateTime?        @db.Timestamptz(6)
+  recordedById      String?          @db.Uuid
+  latitude          Decimal?         @db.Decimal(10, 7)
+  longitude         Decimal?         @db.Decimal(10, 7)
+  remarks           String?          @db.Text
+  createdAt         DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime         @updatedAt @db.Timestamptz(6)
+
+  acquisitionCase AcquisitionCase           @relation(fields: [acquisitionCaseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  recordedBy      User?                     @relation("PossessionRecorder", fields: [recordedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  checklistItems  PossessionChecklistItem[]
+
+  @@index([acquisitionCaseId, status])
+}
+
+model PossessionChecklistItem {
+  id                 String          @id @default(uuid()) @db.Uuid
+  possessionRecordId String          @db.Uuid
+  checkName          String          @db.VarChar(160)
+  status             ChecklistStatus @default(PENDING)
+  remarks            String?         @db.Text
+  completedAt        DateTime?       @db.Timestamptz(6)
+  completedById      String?         @db.Uuid
+
+  possessionRecord PossessionRecord @relation(fields: [possessionRecordId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  completedBy      User?            @relation("PossessionChecklistCompleter", fields: [completedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([possessionRecordId, status])
+}
+
+model Document {
+  id                   String               @id @default(uuid()) @db.Uuid
+  entityType           String               @db.VarChar(80)
+  entityId             String               @db.Uuid
+  documentType         String               @db.VarChar(120)
+  title                String               @db.VarChar(240)
+  status               DocumentStatus       @default(ACTIVE)
+  currentVersionId     String?              @unique @db.Uuid
+  accessClass          DocumentAccessClass  @default(INTERNAL)
+  uploadedById         String               @db.Uuid
+  createdAt            DateTime             @default(now()) @db.Timestamptz(6)
+  updatedAt            DateTime             @updatedAt @db.Timestamptz(6)
+  uploadedBy           User                 @relation("DocumentUploader", fields: [uploadedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  currentVersion       DocumentVersion?     @relation("CurrentDocumentVersion", fields: [currentVersionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  versions             DocumentVersion[]    @relation("DocumentVersions")
+  verificationEvidence VerificationResult[] @relation("VerificationEvidence")
+  fieldEvidence        FieldEvidence[]
+
+  @@index([entityType, entityId])
+  @@index([documentType])
+  @@index([status])
+}
+
+model DocumentVersion {
+  id               String   @id @default(uuid()) @db.Uuid
+  documentId       String   @db.Uuid
+  versionNumber    Int
+  objectKey        String   @db.VarChar(1024)
+  originalFileName String   @db.VarChar(255)
+  mimeType         String   @db.VarChar(160)
+  sizeBytes        BigInt
+  checksum         String   @db.VarChar(128)
+  uploadedById     String   @db.Uuid
+  createdAt        DateTime @default(now()) @db.Timestamptz(6)
+
+  document   Document  @relation("DocumentVersions", fields: [documentId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  currentFor Document? @relation("CurrentDocumentVersion")
+  uploadedBy User      @relation("DocumentVersionUploader", fields: [uploadedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([documentId, versionNumber])
+  @@index([checksum])
+}
+
+model FieldVisit {
+  id                String           @id @default(uuid()) @db.Uuid
+  projectId         String           @db.Uuid
+  acquisitionCaseId String?          @db.Uuid
+  officerId         String           @db.Uuid
+  status            FieldVisitStatus @default(DRAFT)
+  startedAt         DateTime         @db.Timestamptz(6)
+  completedAt       DateTime?        @db.Timestamptz(6)
+  latitude          Decimal?         @db.Decimal(10, 7)
+  longitude         Decimal?         @db.Decimal(10, 7)
+  gpsAccuracyMeters Decimal?         @db.Decimal(10, 3)
+  remarks           String?          @db.Text
+  clientOperationId String?          @unique @db.VarChar(255)
+  createdAt         DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime         @updatedAt @db.Timestamptz(6)
+
+  project         Project              @relation(fields: [projectId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  acquisitionCase AcquisitionCase?     @relation(fields: [acquisitionCaseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  officer         User                 @relation(fields: [officerId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  evidence        FieldEvidence[]
+  checklistItems  FieldChecklistItem[]
+
+  @@index([projectId])
+  @@index([acquisitionCaseId])
+  @@index([officerId])
+  @@index([status])
+}
+
+model FieldEvidence {
+  id           String    @id @default(uuid()) @db.Uuid
+  fieldVisitId String    @db.Uuid
+  documentId   String    @db.Uuid
+  evidenceType String    @db.VarChar(120)
+  capturedAt   DateTime? @db.Timestamptz(6)
+  latitude     Decimal?  @db.Decimal(10, 7)
+  longitude    Decimal?  @db.Decimal(10, 7)
+  createdAt    DateTime  @default(now()) @db.Timestamptz(6)
+
+  fieldVisit FieldVisit @relation(fields: [fieldVisitId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  document   Document   @relation(fields: [documentId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([fieldVisitId])
+}
+
+model FieldChecklistItem {
+  id           String          @id @default(uuid()) @db.Uuid
+  fieldVisitId String          @db.Uuid
+  checkName    String          @db.VarChar(160)
+  status       ChecklistStatus @default(PENDING)
+  remarks      String?         @db.Text
+  createdAt    DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime        @updatedAt @db.Timestamptz(6)
+
+  fieldVisit FieldVisit @relation(fields: [fieldVisitId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([fieldVisitId, status])
+}
+
+model Notification {
+  id         String             @id @default(uuid()) @db.Uuid
+  userId     String             @db.Uuid
+  type       String             @db.VarChar(100)
+  title      String             @db.VarChar(240)
+  message    String             @db.Text
+  entityType String?            @db.VarChar(80)
+  entityId   String?            @db.Uuid
+  status     NotificationStatus @default(PENDING)
+  readAt     DateTime?          @db.Timestamptz(6)
+  createdAt  DateTime           @default(now()) @db.Timestamptz(6)
+
+  user       User                   @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  deliveries NotificationDelivery[]
+
+  @@index([userId, status])
+  @@index([entityType, entityId])
+}
+
+model NotificationDelivery {
+  id                String              @id @default(uuid()) @db.Uuid
+  notificationId    String              @db.Uuid
+  channel           NotificationChannel
+  status            NotificationStatus  @default(PENDING)
+  providerReference String?             @db.VarChar(255)
+  sentAt            DateTime?           @db.Timestamptz(6)
+  deliveredAt       DateTime?           @db.Timestamptz(6)
+  failureReason     String?             @db.Text
+  createdAt         DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime            @updatedAt @db.Timestamptz(6)
+
+  notification Notification @relation(fields: [notificationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([notificationId])
+  @@index([status])
+}
+
+model Alert {
+  id                String        @id @default(uuid()) @db.Uuid
+  projectId         String?       @db.Uuid
+  acquisitionCaseId String?       @db.Uuid
+  type              String        @db.VarChar(100)
+  severity          AlertSeverity
+  message           String        @db.Text
+  status            AlertStatus   @default(OPEN)
+  createdAt         DateTime      @default(now()) @db.Timestamptz(6)
+  resolvedAt        DateTime?     @db.Timestamptz(6)
+  resolvedById      String?       @db.Uuid
+
+  project         Project?         @relation(fields: [projectId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  acquisitionCase AcquisitionCase? @relation(fields: [acquisitionCaseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  resolvedBy      User?            @relation("AlertResolver", fields: [resolvedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([projectId, status])
+  @@index([acquisitionCaseId, status])
+  @@index([severity, status])
+}
+
+model RiskScore {
+  id               String         @id @default(uuid()) @db.Uuid
+  entityType       RiskEntityType
+  entityId         String         @db.Uuid
+  score            Decimal        @db.Decimal(10, 4)
+  riskLevel        RiskLevel
+  algorithmVersion String         @db.VarChar(80)
+  inputSnapshot    Json
+  factors          Json
+  generatedAt      DateTime       @db.Timestamptz(6)
+  createdAt        DateTime       @default(now()) @db.Timestamptz(6)
+
+  @@index([entityType, entityId, generatedAt])
+  @@index([riskLevel])
+}
+
+model AnomalyEvent {
+  id               String         @id @default(uuid()) @db.Uuid
+  entityType       RiskEntityType
+  entityId         String         @db.Uuid
+  type             String         @db.VarChar(100)
+  severity         AlertSeverity
+  description      String         @db.Text
+  detectedBy       String         @db.VarChar(100)
+  algorithmVersion String?        @db.VarChar(80)
+  evidence         Json
+  status           AlertStatus    @default(OPEN)
+  createdAt        DateTime       @default(now()) @db.Timestamptz(6)
+  resolvedAt       DateTime?      @db.Timestamptz(6)
+  resolvedById     String?        @db.Uuid
+
+  resolvedBy User? @relation("AnomalyResolver", fields: [resolvedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([entityType, entityId])
+  @@index([severity, status])
+}
+
+model IntegrationSource {
+  id            String   @id @default(uuid()) @db.Uuid
+  name          String   @db.VarChar(160)
+  type          String   @db.VarChar(80)
+  provider      String   @db.VarChar(120)
+  isMock        Boolean  @default(true)
+  isActive      Boolean  @default(true)
+  configuration Json?
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @db.Timestamptz(6)
+
+  syncs  IntegrationSync[]
+  events IntegrationEvent[]
+}
+
+model IntegrationSync {
+  id                  String                @id @default(uuid()) @db.Uuid
+  integrationSourceId String                @db.Uuid
+  entityType          String                @db.VarChar(80)
+  entityId            String?               @db.Uuid
+  operation           String                @db.VarChar(80)
+  status              IntegrationSyncStatus @default(QUEUED)
+  externalReference   String?               @db.VarChar(255)
+  startedAt           DateTime              @db.Timestamptz(6)
+  completedAt         DateTime?             @db.Timestamptz(6)
+  errorCode           String?               @db.VarChar(100)
+  errorMessage        String?               @db.Text
+  metadata            Json?
+  createdAt           DateTime              @default(now()) @db.Timestamptz(6)
+
+  integrationSource IntegrationSource @relation(fields: [integrationSourceId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([integrationSourceId])
+  @@index([entityType, entityId])
+  @@index([status])
+}
+
+model IntegrationEvent {
+  id                  String                 @id @default(uuid()) @db.Uuid
+  integrationSourceId String                 @db.Uuid
+  eventType           String                 @db.VarChar(100)
+  externalEventId     String                 @db.VarChar(255)
+  payloadHash         String                 @db.VarChar(128)
+  payloadMetadata     Json?
+  processedAt         DateTime?              @db.Timestamptz(6)
+  processingStatus    IntegrationEventStatus @default(RECEIVED)
+  createdAt           DateTime               @default(now()) @db.Timestamptz(6)
+
+  integrationSource IntegrationSource @relation(fields: [integrationSourceId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([integrationSourceId, externalEventId])
+  @@index([processingStatus])
+}
+
+model AuditEvent {
+  id         String   @id @default(uuid()) @db.Uuid
+  actorId    String?  @db.Uuid
+  action     String   @db.VarChar(120)
+  entityType String   @db.VarChar(80)
+  entityId   String   @db.Uuid
+  timestamp  DateTime @db.Timestamptz(6)
+  oldValue   Json?
+  newValue   Json?
+  reason     String?  @db.Text
+  requestId  String   @db.VarChar(128)
+  source     String   @db.VarChar(80)
+  ipAddress  String?  @db.VarChar(64)
+  userAgent  String?  @db.VarChar(512)
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+
+  actor User? @relation("AuditActor", fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([entityType, entityId, timestamp])
+  @@index([actorId])
+  @@index([requestId])
+}
+
+model Grievance {
+  id                String          @id @default(uuid()) @db.Uuid
+  projectId         String?         @db.Uuid
+  acquisitionCaseId String?         @db.Uuid
+  beneficiaryId     String?         @db.Uuid
+  submittedById     String          @db.Uuid
+  category          String          @db.VarChar(120)
+  description       String          @db.Text
+  status            GrievanceStatus @default(OPEN)
+  priority          String          @db.VarChar(40)
+  assignedToId      String?         @db.Uuid
+  resolution        String?         @db.Text
+  resolvedAt        DateTime?       @db.Timestamptz(6)
+  resolvedById      String?         @db.Uuid
+  createdAt         DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime        @updatedAt @db.Timestamptz(6)
+
+  project         Project?         @relation(fields: [projectId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  acquisitionCase AcquisitionCase? @relation(fields: [acquisitionCaseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  beneficiary     Beneficiary?     @relation(fields: [beneficiaryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  submittedBy     User             @relation("GrievanceSubmitter", fields: [submittedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  assignedTo      User?            @relation("GrievanceAssignee", fields: [assignedToId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  resolvedBy      User?            @relation("GrievanceResolver", fields: [resolvedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([projectId, status])
+  @@index([acquisitionCaseId, status])
+  @@index([beneficiaryId])
+  @@index([assignedToId, status])
+}
