@@ -1,0 +1,71 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Next.js (if used)
+.next/
+out/
+
+# Turbo / Cache
+.turbo/
+.cache/
+.parcel-cache/
+
+# Coverage
+coverage/
+
+# Test reports
+playwright-report/
+test-results/
+
+# IDEs
+.vscode/
+!.vscode/extensions.json
+.idea/
+
+# Operating System
+.DS_Store
+Thumbs.db
+
+# Uploads & Temp
+uploads/
+tmp/
+temp/
+
+# Render
+.render/
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+
+# Generated code (if applicable)
+backend/generated/
+
+# Certificates & Keys
+*.pem
+*.key
+*.crt
+
+# Misc
+*.seed
+/generated/prisma
+
+/generated/prisma
