@@ -1,24 +1,32 @@
 import { prisma } from "./client.js";
+import { logger } from "../utils/logger.js";
 
 let isConnected = false;
 
-export const connectDB = async () => {
+export const connectDB = async (): Promise<void> => {
   if (isConnected) {
-    console.log("[Database] Already connected");
+    logger.info("Database already connected");
     return;
   }
 
   try {
     await prisma.$connect();
+    await prisma.$queryRaw`SELECT 1`;
+
     isConnected = true;
-    console.log("[Database] Connected successfully");
+    logger.info("Database connected successfully", {
+      database: "PostgreSQL",
+      orm: "Prisma",
+    });
   } catch (error) {
-    console.error("[Database] Connection failed:", error);
-    process.exit(1);
+    logger.error("Database connection failed", {
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+    throw error;
   }
 };
 
-export const disconnectDB = async () => {
+export const disconnectDB = async (): Promise<void> => {
   if (!isConnected) {
     return;
   }
@@ -26,9 +34,15 @@ export const disconnectDB = async () => {
   try {
     await prisma.$disconnect();
     isConnected = false;
-    console.log("[Database] Disconnected successfully");
+    logger.info("Database disconnected successfully");
   } catch (error) {
-    console.error("[Database] Disconnect failed:", error);
+    logger.error("Database disconnect failed", {
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
     throw error;
   }
+};
+
+export const isDatabaseConnected = (): boolean => {
+  return isConnected;
 };

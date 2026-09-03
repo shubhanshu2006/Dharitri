@@ -1,17 +1,17 @@
-import express from "express";
-import dotenv from "dotenv";
+import express, { Application } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
+import { requestIdMiddleware } from "./middlewares/requestId.middleware.js";
+import { requestLoggerMiddleware } from "./middlewares/requestLogger.middleware.js";
+import {
+  errorHandler,
+  notFoundHandler,
+} from "./middlewares/error.middleware.js";
+import apiRoutes, { healthRouter } from "./routes/index.js";
 
-dotenv.config();
+const app: Application = express();
 
-const app = express();
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
-app.use(cookieParser());
 app.use(helmet());
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
@@ -22,16 +22,41 @@ app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
+
       if (
         allowedOrigins.includes(origin) ||
         process.env.NODE_ENV !== "production"
       ) {
         return callback(null, true);
       }
+
       return callback(new Error(`CORS: origin ${origin} not allowed`));
     },
-    credentials: true, // allow cookies / Authorization headers
+    credentials: true,
   }),
 );
+
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(cookieParser());
+app.use(express.static("public"));
+
+app.use(requestIdMiddleware);
+app.use(requestLoggerMiddleware);
+
+app.use("/health", healthRouter);
+app.use("/api/v1", apiRoutes);
+
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "DHARITRI API Server",
+    version: "1.0.0",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;
