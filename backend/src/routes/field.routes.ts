@@ -2,6 +2,7 @@ import { Router } from "express";
 import fieldController from "../controllers/field.controller.js";
 import { requirePermission } from "../middlewares/authorization.middleware.js";
 import { Permission } from "../constants/permissions.js";
+import { uploadLimiter, strictLimiter } from "../middlewares/rateLimit.middleware.js";
 
 const router = Router();
 
@@ -25,6 +26,7 @@ router.get(
 
 router.post(
   "/visits/:visitId/evidence",
+  uploadLimiter,
   requirePermission(Permission.FIELD_VISIT_CREATE),
   fieldController.uploadEvidence.bind(fieldController),
 );
@@ -43,6 +45,7 @@ router.post(
 
 router.post(
   "/visits/:visitId/verify",
+  strictLimiter,
   requirePermission(Permission.FIELD_VISIT_VIEW),
   fieldController.verifyFieldVisit.bind(fieldController),
 );

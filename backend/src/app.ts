@@ -1,8 +1,9 @@
 import express, { Application } from "express";
 import cors from "cors";
-import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import { clerkMiddleware } from "@clerk/express";
+import { securityHeaders } from "./middlewares/securityHeaders.middleware.js";
+import { apiLimiter } from "./middlewares/rateLimit.middleware.js";
 import { requestIdMiddleware } from "./middlewares/requestId.middleware.js";
 import { requestLoggerMiddleware } from "./middlewares/requestLogger.middleware.js";
 import {
@@ -14,7 +15,7 @@ import apiRoutes, { healthRouter } from "./routes/index.js";
 
 const app: Application = express();
 
-app.use(helmet());
+app.use(securityHeaders);
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
@@ -50,7 +51,7 @@ app.use(clerkMiddleware());
 app.use(loadUser());
 
 app.use("/health", healthRouter);
-app.use("/api/v1", apiRoutes);
+app.use("/api/v1", apiLimiter, apiRoutes);
 
 app.get("/", (req, res) => {
   res.json({

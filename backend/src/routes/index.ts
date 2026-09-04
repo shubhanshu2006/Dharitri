@@ -18,6 +18,7 @@ import notificationRoutes from "./notification.routes.js";
 import auditRoutes from "./audit.routes.js";
 import dashboardRoutes from "./dashboard.routes.js";
 import analyticsRoutes from "./analytics.routes.js";
+import aiRoutes from "./ai.routes.js";
 
 const router = Router();
 
@@ -41,5 +42,6 @@ router.use("/notifications", notificationRoutes);
 router.use("/audit", auditRoutes);
 router.use("/dashboard", dashboardRoutes);
 router.use("/analytics", analyticsRoutes);
+router.use("/ai", aiRoutes);
 
 export default router;
