@@ -8,6 +8,7 @@ import parcelRoutes from "./parcel.routes.js";
 import verificationRoutes from "./verification.routes.js";
 import acquisitionRoutes from "./acquisition.routes.js";
 import compensationRoutes from "./compensation.routes.js";
+import paymentRoutes from "./payment.routes.js";
 
 const router = Router();
 
@@ -21,5 +22,6 @@ router.use("/parcels", parcelRoutes);
 router.use("/verification", verificationRoutes);
 router.use("/acquisitions", acquisitionRoutes);
 router.use("/compensation", compensationRoutes);
+router.use("/payments", paymentRoutes);
 
 export default router;
