@@ -7,6 +7,7 @@ import landRecordRoutes from "./land-record.routes.js";
 import parcelRoutes from "./parcel.routes.js";
 import verificationRoutes from "./verification.routes.js";
 import acquisitionRoutes from "./acquisition.routes.js";
+import compensationRoutes from "./compensation.routes.js";
 
 const router = Router();
 
@@ -19,5 +20,6 @@ router.use("/land-records", landRecordRoutes);
 router.use("/parcels", parcelRoutes);
 router.use("/verification", verificationRoutes);
 router.use("/acquisitions", acquisitionRoutes);
+router.use("/compensation", compensationRoutes);
 
 export default router;
