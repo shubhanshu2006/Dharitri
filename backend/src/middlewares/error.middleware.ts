@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { ZodError } from "zod";
 import { AppError } from "../utils/errors.js";
 import { sendError } from "../utils/response.js";
 import { logger } from "../utils/logger.js";
@@ -10,6 +11,26 @@ export function errorHandler(
   next: NextFunction,
 ): void {
   const requestId = req.requestId;
+
+  if (err instanceof ZodError) {
+    logger.warn(
+      "Validation error",
+      {
+        errors: err.errors,
+      },
+      requestId,
+    );
+
+    sendError(
+      res,
+      400,
+      "VALIDATION_ERROR",
+      "Invalid request data",
+      { errors: err.errors },
+      requestId,
+    );
+    return;
+  }
 
   if (err instanceof AppError) {
     logger.warn(
