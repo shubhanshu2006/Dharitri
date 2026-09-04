@@ -15,6 +15,7 @@ import possessionRoutes from "./possession.routes.js";
 import documentRoutes from "./document.routes.js";
 import fieldRoutes from "./field.routes.js";
 import notificationRoutes from "./notification.routes.js";
+import auditRoutes from "./audit.routes.js";
 
 const router = Router();
 
@@ -35,5 +36,6 @@ router.use("/possession", possessionRoutes);
 router.use("/documents", documentRoutes);
 router.use("/field", fieldRoutes);
 router.use("/notifications", notificationRoutes);
+router.use("/audit", auditRoutes);
 
 export default router;
