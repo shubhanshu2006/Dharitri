@@ -9,7 +9,6 @@ import {
   addProjectMemberSchema,
 } from "../validators/project.validator.js";
 import { successResponse } from "../utils/response.js";
-import { logger } from "../utils/logger.js";
 
 export class ProjectController {
   async createProject(req: Request, res: Response, next: NextFunction) {
@@ -249,6 +248,45 @@ export class ProjectController {
 
       await projectService.removeMember(id, memberId, userId);
       return successResponse(res, null, "Member removed successfully");
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async createLandRequirement(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = req.params.id as string;
+      const userId = req.user?.id;
+
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      const requirement = await projectService.createLandRequirement(
+        id,
+        req.body,
+        userId,
+      );
+      return successResponse(
+        res,
+        requirement,
+        "Land requirement created successfully",
+        201,
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getLandRequirements(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = req.params.id as string;
+      const requirements = await projectService.getLandRequirements(id);
+      return successResponse(
+        res,
+        requirements,
+        "Land requirements retrieved successfully",
+      );
     } catch (error) {
       next(error);
     }

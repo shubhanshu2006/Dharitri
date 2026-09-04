@@ -96,3 +96,15 @@ router.delete(
 );
 
 export default router;
+
+router.post(
+  "/:id/land-requirements",
+  requirePermission(Permission.PROJECT_UPDATE),
+  projectController.createLandRequirement,
+);
+
+router.get(
+  "/:id/land-requirements",
+  requirePermission(Permission.PROJECT_VIEW),
+  projectController.getLandRequirements,
+);

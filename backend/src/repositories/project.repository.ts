@@ -260,6 +260,19 @@ export class ProjectRepository {
       },
     });
   }
+
+  async createLandRequirement(data: Prisma.LandRequirementCreateInput) {
+    return prisma.landRequirement.create({
+      data,
+    });
+  }
+
+  async findLandRequirementsByProjectId(projectId: string) {
+    return prisma.landRequirement.findMany({
+      where: { projectId },
+      orderBy: { createdAt: "desc" },
+    });
+  }
 }
 
 export default new ProjectRepository();

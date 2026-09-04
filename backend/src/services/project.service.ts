@@ -320,6 +320,36 @@ export class ProjectService {
     await projectRepository.removeMember(projectId, memberId);
     logger.info(`Member removed successfully from project: ${projectId}`);
   }
+
+  async createLandRequirement(projectId: string, data: any, userId: string) {
+    const project = await projectRepository.findById(projectId);
+    if (!project) {
+      throw new NotFoundError("Project not found");
+    }
+
+    logger.info(`Creating land requirement for project: ${projectId}`, {
+      userId,
+    });
+
+    const requirement = await projectRepository.createLandRequirement({
+      project: { connect: { id: projectId } },
+      requiredAreaSqMeters: data.requiredAreaSqMeters,
+      landCategory: data.landCategory,
+      description: data.description,
+    });
+
+    logger.info(`Land requirement created: ${requirement.id}`);
+    return requirement;
+  }
+
+  async getLandRequirements(projectId: string) {
+    const project = await projectRepository.findById(projectId);
+    if (!project) {
+      throw new NotFoundError("Project not found");
+    }
+
+    return projectRepository.findLandRequirementsByProjectId(projectId);
+  }
 }
 
 export default new ProjectService();
