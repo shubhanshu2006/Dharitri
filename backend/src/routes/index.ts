@@ -12,6 +12,7 @@ import paymentRoutes from "./payment.routes.js";
 import beneficiaryRoutes from "./beneficiary.routes.js";
 import rrRoutes from "./rr.routes.js";
 import possessionRoutes from "./possession.routes.js";
+import documentRoutes from "./document.routes.js";
 
 const router = Router();
 
@@ -29,5 +30,6 @@ router.use("/payments", paymentRoutes);
 router.use("/beneficiaries", beneficiaryRoutes);
 router.use("/rr", rrRoutes);
 router.use("/possession", possessionRoutes);
+router.use("/documents", documentRoutes);
 
 export default router;
