@@ -1,0 +1,31 @@
+export enum Role {
+  SUPER_ADMIN = "SUPER_ADMIN",
+  CENTRAL_MINISTRY = "CENTRAL_MINISTRY",
+  STATE_ADMIN = "STATE_ADMIN",
+  DISTRICT_ADMIN = "DISTRICT_ADMIN",
+  LAND_ACQUISITION_OFFICER = "LAND_ACQUISITION_OFFICER",
+  PROJECT_IMPLEMENTING_AGENCY = "PROJECT_IMPLEMENTING_AGENCY",
+  FIELD_VERIFIER = "FIELD_VERIFIER",
+  FINANCE_OFFICER = "FINANCE_OFFICER",
+  RR_OFFICER = "RR_OFFICER",
+  GIS_OFFICER = "GIS_OFFICER",
+  REVIEWER = "REVIEWER",
+  EXECUTIVE_VIEWER = "EXECUTIVE_VIEWER",
+  CITIZEN = "CITIZEN",
+}
+
+export const ROLE_DESCRIPTIONS: Record<Role, string> = {
+  [Role.SUPER_ADMIN]: "Full system access",
+  [Role.CENTRAL_MINISTRY]: "Central government ministry access",
+  [Role.STATE_ADMIN]: "State-level administration",
+  [Role.DISTRICT_ADMIN]: "District-level administration",
+  [Role.LAND_ACQUISITION_OFFICER]: "Land acquisition operations",
+  [Role.PROJECT_IMPLEMENTING_AGENCY]: "Project implementation and management",
+  [Role.FIELD_VERIFIER]: "Field verification operations",
+  [Role.FINANCE_OFFICER]: "Financial operations and payments",
+  [Role.RR_OFFICER]: "Rehabilitation and resettlement",
+  [Role.GIS_OFFICER]: "GIS and mapping operations",
+  [Role.REVIEWER]: "Review and approval operations",
+  [Role.EXECUTIVE_VIEWER]: "Executive dashboard and reports access",
+  [Role.CITIZEN]: "Public access",
+};
