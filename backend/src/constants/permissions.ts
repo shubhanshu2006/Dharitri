@@ -70,6 +70,7 @@ export enum Permission {
 
   DASHBOARD_VIEW = "DASHBOARD_VIEW",
   ANALYTICS_VIEW = "ANALYTICS_VIEW",
+  AI_DECISION_SUPPORT_VIEW = "AI_DECISION_SUPPORT_VIEW",
 
   USER_MANAGE = "USER_MANAGE",
   ROLE_MANAGE = "ROLE_MANAGE",
@@ -158,6 +159,8 @@ export const PERMISSION_DESCRIPTIONS: Record<Permission, string> = {
 
   [Permission.DASHBOARD_VIEW]: "View dashboards",
   [Permission.ANALYTICS_VIEW]: "View analytics",
+  [Permission.AI_DECISION_SUPPORT_VIEW]:
+    "View AI decision support and risk scores",
 
   [Permission.USER_MANAGE]: "Manage users",
   [Permission.ROLE_MANAGE]: "Manage roles",
