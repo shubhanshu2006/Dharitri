@@ -116,3 +116,12 @@ export function sendAccepted(
 export function sendNoContent(res: Response): Response {
   return res.status(204).send();
 }
+
+export function successResponse<T>(
+  res: Response,
+  data: T,
+  message?: string,
+  statusCode: number = 200,
+): Response {
+  return sendSuccess(res, data, message, statusCode);
+}
