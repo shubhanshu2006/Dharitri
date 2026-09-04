@@ -10,6 +10,7 @@ import acquisitionRoutes from "./acquisition.routes.js";
 import compensationRoutes from "./compensation.routes.js";
 import paymentRoutes from "./payment.routes.js";
 import beneficiaryRoutes from "./beneficiary.routes.js";
+import rrRoutes from "./rr.routes.js";
 
 const router = Router();
 
@@ -25,5 +26,6 @@ router.use("/acquisitions", acquisitionRoutes);
 router.use("/compensation", compensationRoutes);
 router.use("/payments", paymentRoutes);
 router.use("/beneficiaries", beneficiaryRoutes);
+router.use("/rr", rrRoutes);
 
 export default router;
