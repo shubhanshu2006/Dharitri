@@ -31,6 +31,13 @@ export function loadUser() {
   };
 }
 
+export function requireAuth(req: Request, res: Response, next: NextFunction) {
+  if (!req.user) {
+    throw new UnauthorizedError("Authentication required");
+  }
+  next();
+}
+
 export function requirePermission(permission: string) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {

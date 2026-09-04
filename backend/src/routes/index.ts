@@ -14,6 +14,7 @@ import rrRoutes from "./rr.routes.js";
 import possessionRoutes from "./possession.routes.js";
 import documentRoutes from "./document.routes.js";
 import fieldRoutes from "./field.routes.js";
+import notificationRoutes from "./notification.routes.js";
 
 const router = Router();
 
@@ -33,5 +34,6 @@ router.use("/rr", rrRoutes);
 router.use("/possession", possessionRoutes);
 router.use("/documents", documentRoutes);
 router.use("/field", fieldRoutes);
+router.use("/notifications", notificationRoutes);
 
 export default router;
