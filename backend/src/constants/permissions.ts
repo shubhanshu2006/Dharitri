@@ -23,6 +23,8 @@ export enum Permission {
   ACQUISITION_CREATE = "ACQUISITION_CREATE",
   ACQUISITION_VIEW = "ACQUISITION_VIEW",
   ACQUISITION_UPDATE = "ACQUISITION_UPDATE",
+  ACQUISITION_DELETE = "ACQUISITION_DELETE",
+  ACQUISITION_APPROVE = "ACQUISITION_APPROVE",
   ACQUISITION_TRANSITION = "ACQUISITION_TRANSITION",
 
   COMPENSATION_CREATE = "COMPENSATION_CREATE",
@@ -109,6 +111,8 @@ export const PERMISSION_DESCRIPTIONS: Record<Permission, string> = {
   [Permission.ACQUISITION_CREATE]: "Create acquisition cases",
   [Permission.ACQUISITION_VIEW]: "View acquisition cases",
   [Permission.ACQUISITION_UPDATE]: "Update acquisition information",
+  [Permission.ACQUISITION_DELETE]: "Delete acquisition cases",
+  [Permission.ACQUISITION_APPROVE]: "Approve and transition acquisition cases",
   [Permission.ACQUISITION_TRANSITION]: "Transition acquisition status",
 
   [Permission.COMPENSATION_CREATE]: "Create compensation assessments",
