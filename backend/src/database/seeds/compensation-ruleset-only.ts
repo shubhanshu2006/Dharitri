@@ -1,23 +1,15 @@
 import "dotenv/config";
-import { seedRolesAndPermissions } from "./rbac.seed.js";
-import { seedLocations } from "./location.seed.js";
-import { seedCadastralParcels } from "./cadastral.seed.js";
 import { seedCompensationRuleSets } from "./compensation-ruleset.js";
 import { prisma } from "../client.js";
 import { logger } from "../../utils/logger.js";
 
 async function main() {
   try {
-    logger.info("Starting database seeding...");
-
-    await seedRolesAndPermissions();
-    await seedLocations();
-    await seedCadastralParcels();
+    logger.info("Starting compensation rule set seeding...");
     await seedCompensationRuleSets();
-
-    logger.info("Database seeding completed successfully");
+    logger.info("Compensation rule set seeding completed");
   } catch (error) {
-    logger.error("Database seeding failed", {
+    logger.error("Compensation rule set seeding failed", {
       error: error instanceof Error ? error.message : "Unknown error",
     });
     throw error;

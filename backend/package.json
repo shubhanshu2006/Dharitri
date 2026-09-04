@@ -15,7 +15,8 @@
     "db:seed": "tsx src/database/seeds/index.ts",
     "db:seed:cadastral": "tsx src/database/seeds/cadastral-only.ts",
     "db:seed:locations": "tsx src/database/seeds/location-only.ts",
-    "db:seed:rbac": "tsx src/database/seeds/rbac-only.ts"
+    "db:seed:rbac": "tsx src/database/seeds/rbac-only.ts",
+    "db:seed:compensation": "tsx src/database/seeds/compensation-ruleset-only.ts"
   },
   "keywords": [],
   "author": "Shubhanshu Singh",
