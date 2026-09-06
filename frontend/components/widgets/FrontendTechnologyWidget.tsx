@@ -38,7 +38,7 @@ export function FrontendTechnologyWidget() {
               <Home className="h-3 w-3 text-emerald-700" />
             </div>
 
-            <span className="text-[8px] font-semibold text-slate-700">
+            <span className="text-[10px] font-semibold text-slate-700">
               DHARITRI
             </span>
           </div>
@@ -61,7 +61,7 @@ export function FrontendTechnologyWidget() {
               >
                 <Icon className="h-2.5 w-2.5 text-slate-500" />
 
-                <span className="text-[7px] text-slate-500">
+                <span className="text-[11px] text-slate-500">
                   {label as string}
                 </span>
               </motion.div>
@@ -77,7 +77,7 @@ export function FrontendTechnologyWidget() {
                 Land Dashboard
               </p>
 
-              <p className="text-[7px] text-slate-400">
+              <p className="text-[9px] text-slate-400">
                 Acquisition overview
               </p>
             </div>
@@ -113,7 +113,7 @@ export function FrontendTechnologyWidget() {
                   {value}
                 </p>
 
-                <p className="text-[6px] text-slate-500">
+                <p className="text-[9px] text-slate-500">
                   {label}
                 </p>
               </motion.div>

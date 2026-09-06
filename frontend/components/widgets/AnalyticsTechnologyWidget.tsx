@@ -18,12 +18,12 @@ export function AnalyticsTechnologyWidget() {
           <p className="text-[12px] font-semibold text-slate-800">
             Decision Engine
           </p>
-          <p className="text-[9px] text-slate-400">
+          <p className="text-[11px] text-slate-400">
             Live model inference
           </p>
         </div>
 
-        <span className="flex items-center gap-1.5 text-[9px] font-medium text-violet-600">
+        <span className="flex items-center gap-1.5 text-[10px] font-medium text-violet-600">
           <motion.span
             animate={{
               scale: [1, 1.5, 1],
@@ -60,12 +60,12 @@ export function AnalyticsTechnologyWidget() {
             >
               <span className="h-2 w-2 shrink-0 rounded-full bg-violet-400" />
 
-              <span className="min-w-0 flex-1 truncate text-[9px] font-medium text-slate-700">
+              <span className="min-w-0 flex-1 truncate text-[10px] font-medium text-slate-700">
                 {name}
               </span>
 
               <span
-                className={`rounded-full px-2 py-0.5 text-[8px] font-medium ${
+                className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
                   level === "High"
                     ? "bg-red-100 text-red-700"
                     : level === "Medium"
@@ -76,7 +76,7 @@ export function AnalyticsTechnologyWidget() {
                 {level}
               </span>
 
-              <span className="text-[9px] font-semibold text-violet-600">
+              <span className="text-[10px] font-semibold text-violet-600">
                 {score}
               </span>
             </div>

@@ -55,7 +55,7 @@ export function GovernmentIntegrationWidget() {
           </h3>
         </div>
 
-        <div className="mt-6 flex items-center justify-between gap-5">
+        <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="shrink-0">
             <p className="font-serif text-6xl tracking-tight text-text">
               8+
@@ -66,7 +66,7 @@ export function GovernmentIntegrationWidget() {
             </p>
           </div>
 
-          <div className="relative h-[145px] w-[270px] shrink-0">
+          <div className="relative mx-auto h-[145px] w-full max-w-[270px] shrink-0 sm:mx-0">
             {/* Connections */}
             {[
               "left-[25%] top-[28%] rotate-[25deg]",

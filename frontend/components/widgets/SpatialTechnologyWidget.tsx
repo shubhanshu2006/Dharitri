@@ -131,29 +131,29 @@ export function SpatialTechnologyWidget() {
         }}
         className="absolute right-2.5 top-2.5 w-[39%] rounded-xl border border-white/70 bg-white/90 p-2.5 shadow-lg backdrop-blur-sm"
       >
-        <p className="text-[9px] font-semibold text-slate-900">
+        <p className="text-[10px] font-semibold text-slate-900">
           {parcel.id}
         </p>
 
-        <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[6px] text-emerald-700">
+        <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[8px] text-emerald-700">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
           {parcel.status}
         </span>
 
         <div className="mt-2 border-t border-black/5 pt-1.5">
-          <p className="text-[6px] text-slate-400">
+          <p className="text-[8px] text-slate-400">
             Parcel area
           </p>
 
-          <p className="text-[9px] font-medium text-slate-800">
+          <p className="text-[11px] font-medium text-slate-800">
             {parcel.area}
           </p>
 
-          <p className="mt-1 text-[6px] text-slate-400">
+          <p className="mt-1 text-[8px] text-slate-400">
             Cadastral match
           </p>
 
-          <p className="text-[8px] font-medium text-emerald-700">
+          <p className="text-[10px] font-medium text-emerald-700">
             98.4%
           </p>
         </div>

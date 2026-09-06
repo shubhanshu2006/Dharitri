@@ -19,12 +19,12 @@ export function ApiTechnologyWidget() {
           <p className="text-[12px] font-semibold text-slate-800">
             API Gateway
           </p>
-          <p className="text-[9px] text-slate-400">
+          <p className="text-[11px] text-slate-400">
             Live service activity
           </p>
         </div>
 
-        <span className="flex items-center gap-1.5 text-[9px] font-medium text-emerald-600">
+        <span className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-600">
           <motion.span
             animate={{ scale: [1, 1.5, 1], opacity: [0.6, 1, 0.6] }}
             transition={{
@@ -61,7 +61,7 @@ export function ApiTechnologyWidget() {
                 className="flex items-center gap-2 rounded-lg border border-black/5 bg-slate-50/80 px-2.5 py-2"
               >
                 <span
-                  className={`w-9 rounded px-1 py-0.5 text-center text-[8px] font-bold ${
+                  className={`w-9 rounded px-1 py-0.5 text-center text-[10px] font-bold ${
                     method === "POST"
                       ? "bg-blue-100 text-blue-700"
                       : method === "PUT"
@@ -72,15 +72,15 @@ export function ApiTechnologyWidget() {
                   {method}
                 </span>
 
-                <span className="min-w-0 flex-1 truncate font-mono text-[9px] text-slate-600">
+                <span className="min-w-0 flex-1 truncate font-mono text-[10px] text-slate-600">
                   {endpoint}
                 </span>
 
-                <span className="text-[9px] font-semibold text-emerald-600">
+                <span className="text-[10px] font-semibold text-emerald-600">
                   {status}
                 </span>
 
-                <span className="w-10 text-right text-[8px] text-slate-400">
+                <span className="w-10 text-right text-[10px] text-slate-400">
                   {time}
                 </span>
               </div>

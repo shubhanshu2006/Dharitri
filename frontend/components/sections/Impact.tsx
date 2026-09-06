@@ -39,20 +39,20 @@ export function Impact() {
             IMPACT WIDGETS
         ====================================================== */}
 
-        <div className="mt-14 grid items-stretch gap-5 lg:grid-cols-2">
-          <Reveal delay={0.05} className="h-full">
+        <div className="mt-14 grid min-w-0 items-stretch gap-5 lg:grid-cols-2">
+          <Reveal delay={0.05} className="h-full min-w-0">
             <LandCoverageWidget />
           </Reveal>
 
-          <Reveal delay={0.1} className="h-full">
+          <Reveal delay={0.1} className="h-full min-w-0">
             <FasterReportingWidget />
           </Reveal>
 
-          <Reveal delay={0.15} className="h-full">
+          <Reveal delay={0.15} className="h-full min-w-0">
             <CompensationImpactWidget />
           </Reveal>
 
-          <Reveal delay={0.2} className="h-full">
+          <Reveal delay={0.2} className="h-full min-w-0">
             <GovernmentIntegrationWidget />
           </Reveal>
         </div>
@@ -61,7 +61,7 @@ export function Impact() {
             CONTINUOUS AUDIT
         ====================================================== */}
 
-        <Reveal delay={0.3} className="mt-5">
+        <Reveal delay={0.3} className="mt-5 h-full min-w-0">
           <AuditActivityWidget />
         </Reveal>
       </div>

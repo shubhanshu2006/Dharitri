@@ -100,7 +100,7 @@ export function SecurityTechnologyWidget() {
                     />
                   </motion.div>
 
-                  <span className="mt-1.5 text-[9px] text-slate-500">
+                  <span className="mt-1.5 text-[11px] text-slate-500">
                     {item.label}
                   </span>
                 </div>
@@ -136,7 +136,7 @@ export function SecurityTechnologyWidget() {
             <div className="flex items-center gap-1.5">
               <ShieldCheck className="h-3.5 w-3.5 text-violet-600" />
 
-              <span className="text-[9px] font-semibold text-slate-800">
+              <span className="text-[11px] font-semibold text-slate-800">
                 Protected
               </span>
             </div>
@@ -158,7 +158,7 @@ export function SecurityTechnologyWidget() {
                 >
                   <span className="h-1 w-1 rounded-full bg-violet-500" />
 
-                  <span className="text-[9px] text-slate-500">
+                  <span className="text-[11px] text-slate-500">
                     {item}
                   </span>
                 </motion.div>
