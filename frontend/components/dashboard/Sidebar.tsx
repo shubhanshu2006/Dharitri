@@ -60,6 +60,12 @@ const navigation: NavItem[] = [
     permission: Permission.VERIFICATION_VIEW,
   },
   {
+    label: "Acquisition",
+    href: "/dashboard/acquisition",
+    icon: <FolderKanban className="w-5 h-5" />,
+    permission: Permission.ACQUISITION_VIEW,
+  },
+  {
     label: "Compensation",
     href: "/dashboard/compensation",
     icon: <DollarSign className="w-5 h-5" />,
