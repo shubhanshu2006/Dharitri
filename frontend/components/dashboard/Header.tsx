@@ -1,0 +1,59 @@
+"use client";
+
+import { UserButton, useUser } from "@clerk/nextjs";
+import { Bell, Search } from "lucide-react";
+import { useCurrentUser } from "@/hooks/useUser";
+import { RoleBadge } from "@/components/auth/RoleBadge";
+
+export function Header() {
+  const { user: clerkUser, isLoaded: clerkLoaded } = useUser();
+  const { data: dharitriUser, isLoading: dharitriLoading } = useCurrentUser();
+
+  return (
+    <header className="h-16 bg-white border-b border-paper-line px-6 flex items-center justify-between">
+      {/* Search */}
+      <div className="flex-1 max-w-xl">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
+          <input
+            type="search"
+            placeholder="Search projects, parcels, cases..."
+            className="w-full pl-10 pr-4 py-2 rounded-lg border border-paper-line bg-paper focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-sm"
+          />
+        </div>
+      </div>
+
+      {/* Right Section */}
+      <div className="flex items-center gap-4 ml-6">
+        {/* Notifications */}
+        <button className="relative p-2 rounded-lg hover:bg-paper-dim transition-colors">
+          <Bell className="w-5 h-5 text-muted" />
+          <span className="absolute top-1 right-1 w-2 h-2 bg-clay-500 rounded-full" />
+        </button>
+
+        {/* User Info & Avatar */}
+        <div className="flex items-center gap-3">
+          {clerkLoaded && !dharitriLoading && dharitriUser && (
+            <div className="text-right hidden md:block">
+              <p className="text-sm font-medium text-text">
+                {dharitriUser.name || clerkUser?.emailAddresses[0]?.emailAddress}
+              </p>
+              <div className="flex items-center justify-end gap-1 mt-0.5">
+                {dharitriUser.roles?.slice(0, 1).map((role) => (
+                  <RoleBadge key={role} role={role} size="sm" />
+                ))}
+              </div>
+            </div>
+          )}
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: "w-10 h-10",
+              },
+            }}
+          />
+        </div>
+      </div>
+    </header>
+  );
+}
