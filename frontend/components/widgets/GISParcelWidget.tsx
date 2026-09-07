@@ -496,7 +496,7 @@ export function GISParcelWidget() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.18 }}
-              className="flex w-full flex-wrap items-center justify-between gap-2 text-[10px] text-muted"
+              className="flex w-full flex-wrap items-center justify-between gap-2 text-xs text-muted"
             >
               {(Object.keys(STATUS_STYLES) as Status[]).map((status) => (
                 <span key={status} className="flex items-center gap-1.5">

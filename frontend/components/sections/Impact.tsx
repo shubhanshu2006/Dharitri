@@ -39,7 +39,7 @@ export function Impact() {
             IMPACT WIDGETS
         ====================================================== */}
 
-        <div className="mt-14 grid min-w-0 items-stretch gap-5 lg:grid-cols-2">
+        <div className="mt-14 grid grid-cols-1 min-w-0 items-stretch gap-5 lg:grid-cols-2">
           <Reveal delay={0.05} className="h-full min-w-0">
             <LandCoverageWidget />
           </Reveal>

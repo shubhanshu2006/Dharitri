@@ -27,8 +27,8 @@ export function FasterReportingWidget() {
           </h3>
         </div>
 
-        <div className="mt-7 grid grid-cols-[0.8fr_1fr_1fr] items-center gap-5">
-          <div>
+        <div className="mt-7 grid grid-cols-2 items-center gap-5 sm:grid-cols-[0.8fr_1fr_1fr]">
+          <div className="col-span-2 sm:col-span-1">
             <AnimatedCounter
               value={5}
               suffix="×"
@@ -63,7 +63,7 @@ export function FasterReportingWidget() {
                     delay: i * 0.12,
                     ease: "easeInOut",
                   }}
-                  className="h-9 w-2.5 origin-bottom rounded-sm bg-black/10"
+                  className="h-9 w-2 origin-bottom rounded-sm bg-black/10 sm:w-2.5"
                 />
               ))}
             </div>
@@ -98,7 +98,7 @@ export function FasterReportingWidget() {
                     delay: i * 0.1,
                     ease: "easeInOut",
                   }}
-                  className={`h-9 w-2.5 origin-bottom rounded-sm ${
+                  className={`h-9 w-2 origin-bottom rounded-sm sm:w-2.5 ${
                     i < 3
                       ? "bg-emerald-500"
                       : "bg-emerald-100"

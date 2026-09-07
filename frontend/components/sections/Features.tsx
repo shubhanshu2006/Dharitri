@@ -28,7 +28,7 @@ export function Features() {
           description="Not just a records viewer - each module behaves like a real, connected part of the platform. Hover and watch them respond."
         />
 
-        <div className="mt-16 grid gap-6 lg:grid-cols-3">
+        <div className="mt-16 grid grid-cols-1 gap-6 lg:grid-cols-3">
           <FeatureCard
             icon={<Map className="h-5 w-5" strokeWidth={1.7} />}
             title="GIS parcel intelligence"
