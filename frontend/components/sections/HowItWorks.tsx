@@ -76,8 +76,8 @@ export function HowItWorks() {
                       aria-hidden
                       className={`absolute inset-0 scale-100 bg-center bg-no-repeat transition-all duration-700 ease-out group-hover:scale-105 group-hover:blur-[3px] ${
                         isFirstRow
-                          ? "bg-[length:100%_100%]"
-                          : "bg-contain lg:bg-cover"
+                          ? "bg-size-[100%_100%]"
+                          : "bg-size-[100%_100%]"
                       }`}
                       style={{
                         backgroundImage: `url("${image}")`,

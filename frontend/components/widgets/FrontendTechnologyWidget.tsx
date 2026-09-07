@@ -29,10 +29,10 @@ export function FrontendTechnologyWidget() {
   }, []);
 
   return (
-    <div className="relative h-[178px] overflow-hidden rounded-2xl border border-black/10 bg-white/75 p-3 shadow-sm">
+    <div className="relative h-44.5 overflow-hidden rounded-2xl border border-black/10 bg-white/75 p-3 shadow-sm">
       <div className="flex h-full overflow-hidden rounded-xl border border-black/5 bg-white">
         {/* Sidebar */}
-        <div className="w-[25%] border-r border-black/5 bg-slate-50 p-2">
+        <div className="hidden w-[25%] shrink-0 border-r border-black/5 bg-slate-50 p-2 sm:block">
           <div className="flex items-center gap-1.5">
             <div className="flex h-5 w-5 items-center justify-center rounded-md bg-emerald-100">
               <Home className="h-3 w-3 text-emerald-700" />
@@ -57,7 +57,7 @@ export function FrontendTechnologyWidget() {
                   x: active === i % 3 ? 2 : 0,
                   opacity: active === i % 3 ? 1 : 0.55,
                 }}
-                className="flex items-center gap-1.5 rounded-md px-1.5 py-1"
+                className="flex items-center gap-1.5 rounded-md px-0 py-1"
               >
                 <Icon className="h-2.5 w-2.5 text-slate-500" />
 
@@ -70,7 +70,7 @@ export function FrontendTechnologyWidget() {
         </div>
 
         {/* Dashboard */}
-        <div className="relative flex-1 p-3">
+        <div className="relative min-w-0 flex-1 p-2.5 sm:p-3">
           <div className="flex items-center justify-between">
             <div>
               <p className="font-serif text-sm text-slate-900">
@@ -94,7 +94,7 @@ export function FrontendTechnologyWidget() {
             />
           </div>
 
-          <div className="mt-4 grid grid-cols-3 gap-1.5">
+          <div className="mt-2.5 grid grid-cols-3 gap-1 sm:mt-4 sm:gap-1.5">
             {STATS.map(([value, label], i) => (
               <motion.div
                 key={label}
@@ -107,7 +107,7 @@ export function FrontendTechnologyWidget() {
                   stiffness: 250,
                   damping: 18,
                 }}
-                className="rounded-lg bg-emerald-50 p-2"
+                className="rounded-lg bg-emerald-50 p-1.5 sm:p-2"
               >
                 <p className="font-serif text-base text-slate-900">
                   {value}
@@ -121,7 +121,7 @@ export function FrontendTechnologyWidget() {
           </div>
 
           {/* Moving graph */}
-          <div className="mt-4 flex h-9 items-end gap-1">
+          <div className="mt-2.5 flex h-8 items-end gap-1 sm:mt-4 sm:h-9">
             {[30, 45, 35, 65, 50, 75, 58, 85, 68, 92].map(
               (height, i) => (
                 <motion.div
