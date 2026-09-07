@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, Instrument_Serif, Inter } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
+import { QueryProvider } from "@/providers/query-provider";
 import "./globals.css";
 
 const instrumentSerif = Instrument_Serif({
@@ -20,20 +22,22 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "DHARITRI — Digital Hub for Land Acquisition Intelligence",
+  title: "DHARITRI - Digital Hub for Land Acquisition Intelligence",
   description:
     "DHARITRI brings land records, GIS intelligence, and verified government data together to support infrastructure, housing, industry and public services — for a better, more inclusive tomorrow.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${instrumentSerif.variable} ${instrumentSans.variable} ${inter.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-paper text-text">
-        {children}
-      </body>
-    </html>
+    <ClerkProvider>
+      <html
+        lang="en"
+        className={`${instrumentSerif.variable} ${instrumentSans.variable} ${inter.variable} h-full antialiased`}
+      >
+        <body className="min-h-full flex flex-col bg-paper text-text">
+          <QueryProvider>{children}</QueryProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
