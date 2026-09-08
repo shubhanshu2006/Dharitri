@@ -6,6 +6,7 @@ import { useDocument, useDeleteDocument } from "@/hooks/useDocuments";
 import { CanView, useCanDo } from "@/components/auth";
 import { Permission } from "@/lib/constants/permissions";
 import { DocumentViewer } from "@/components/documents/DocumentViewer";
+import { DocumentVersionHistory } from "@/components/documents";
 import {
   Card,
   CardContent,
@@ -109,6 +110,12 @@ export default function DocumentDetailPage({
 
       {/* Document Viewer */}
       <DocumentViewer document={document} onVersionUpload={handleVersionUpload} />
+
+      {/* Version History */}
+      <DocumentVersionHistory
+        documentId={id}
+        onUploadVersion={handleVersionUpload}
+      />
 
       {/* Entity Information */}
       <Card>

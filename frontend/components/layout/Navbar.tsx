@@ -79,11 +79,11 @@ export function Navbar() {
             <span className="relative h-2.5 w-2.5 rounded-full bg-emerald-400" />
           </span>
           <Image
-            src="/images/Logo.png"
+            src="/images/Dharitri.png"
             alt="DHARITRI"
             width={102}
             height={102}
-            className="w-24 h-8 "
+            className="w-30 h-11 "
           />
         </Link>
 

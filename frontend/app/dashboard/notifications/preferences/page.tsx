@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Bell, Mail, MessageSquare, Save } from "lucide-react";
+import { ArrowLeft, Bell, Mail, MessageSquare, Save, CheckCircle } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { NotificationType } from "@/lib/constants/notifications";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
 
 interface NotificationPreference {
   type: NotificationType;
@@ -18,9 +22,16 @@ interface NotificationPreference {
 
 export default function NotificationPreferencesPage() {
   const router = useRouter();
-  const [isSaving, setIsSaving] = useState(false);
+  const queryClient = useQueryClient();
+  const [showSuccess, setShowSuccess] = useState(false);
 
-  // In a real app, this would come from an API
+  // Fetch preferences from API
+  const { data: apiPreferences, isLoading, error } = useQuery({
+    queryKey: ["notification-preferences"],
+    queryFn: () => api.get<NotificationPreference[]>("/notifications/preferences"),
+  });
+
+  // Initialize local state with API data
   const [preferences, setPreferences] = useState<NotificationPreference[]>([
     {
       type: NotificationType.PROJECT_CREATED,
@@ -152,6 +163,24 @@ export default function NotificationPreferencesPage() {
     },
   ]);
 
+  // Update local state when API data loads
+  useEffect(() => {
+    if (apiPreferences && apiPreferences.length > 0) {
+      setPreferences(apiPreferences);
+    }
+  }, [apiPreferences]);
+
+  // Save preferences mutation
+  const savePreferences = useMutation({
+    mutationFn: (prefs: NotificationPreference[]) =>
+      api.post("/notifications/preferences", { preferences: prefs }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notification-preferences"] });
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    },
+  });
+
   const togglePreference = (
     index: number,
     channel: "inApp" | "email" | "sms"
@@ -161,12 +190,8 @@ export default function NotificationPreferencesPage() {
     setPreferences(updated);
   };
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsSaving(false);
-    // In a real app, would show success toast
+  const handleSave = () => {
+    savePreferences.mutate(preferences);
   };
 
   const enableAll = (channel: "inApp" | "email" | "sms") => {
@@ -176,6 +201,38 @@ export default function NotificationPreferencesPage() {
   const disableAll = (channel: "inApp" | "email" | "sms") => {
     setPreferences(preferences.map((p) => ({ ...p, [channel]: false })));
   };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <LoadingSpinner message="Loading preferences..." />
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.back()}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+        </div>
+        <ErrorMessage
+          message="Failed to load notification preferences"
+          onRetry={() => window.location.reload()}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -198,11 +255,31 @@ export default function NotificationPreferencesPage() {
             Manage how you receive notifications for different events
           </p>
         </div>
-        <Button onClick={handleSave} disabled={isSaving}>
+        <Button onClick={handleSave} disabled={savePreferences.isPending} loading={savePreferences.isPending}>
           <Save className="h-4 w-4 mr-2" />
-          {isSaving ? "Saving..." : "Save Preferences"}
+          {savePreferences.isPending ? "Saving..." : "Save Preferences"}
         </Button>
       </div>
+
+      {/* Success Message */}
+      {showSuccess && (
+        <Card className="p-4 bg-green-50 border-green-200">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="h-5 w-5 text-green-600" />
+            <p className="text-sm font-medium text-green-900">
+              Preferences saved successfully!
+            </p>
+          </div>
+        </Card>
+      )}
+
+      {/* Error Message */}
+      {savePreferences.isError && (
+        <ErrorMessage
+          message={savePreferences.error?.message || "Failed to save preferences"}
+          onRetry={() => savePreferences.reset()}
+        />
+      )}
 
       {/* Info Card */}
       <Card className="p-4 bg-blue-50 border-blue-200">
@@ -349,9 +426,9 @@ export default function NotificationPreferencesPage() {
         <Button variant="outline" onClick={() => router.back()}>
           Cancel
         </Button>
-        <Button onClick={handleSave} disabled={isSaving}>
+        <Button onClick={handleSave} disabled={savePreferences.isPending} loading={savePreferences.isPending}>
           <Save className="h-4 w-4 mr-2" />
-          {isSaving ? "Saving..." : "Save Preferences"}
+          {savePreferences.isPending ? "Saving..." : "Save Preferences"}
         </Button>
       </div>
     </div>
