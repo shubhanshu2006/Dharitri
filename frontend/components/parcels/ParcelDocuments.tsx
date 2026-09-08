@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useDocuments, useUploadDocument, useDeleteDocument } from "@/hooks/useDocuments";
+import { useDocumentsByEntity, useUploadDocument, useDeleteDocument } from "@/hooks/useDocuments";
 import {
   Card,
   CardHeader,
@@ -14,6 +14,12 @@ import {
 import { CanView } from "@/components/auth";
 import { Permission } from "@/lib/constants/permissions";
 import {
+  DocumentEntityType,
+  DocumentAccessClass,
+  DOCUMENT_TYPES,
+  formatFileSize,
+} from "@/lib/constants/documents";
+import {
   FileText,
   Upload,
   Download,
@@ -21,45 +27,25 @@ import {
   File,
   X,
 } from "lucide-react";
-import { formatDate, formatFileSize } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 
 interface ParcelDocumentsProps {
   parcelId: string;
 }
 
-const DOCUMENT_CATEGORIES = [
-  "SURVEY_REPORT",
-  "TITLE_DEED",
-  "VERIFICATION_REPORT",
-  "COMPENSATION_DOCUMENT",
-  "LEGAL_DOCUMENT",
-  "PHOTO",
-  "OTHER",
-];
-
-const CATEGORY_LABELS: Record<string, string> = {
-  SURVEY_REPORT: "Survey Report",
-  TITLE_DEED: "Title Deed",
-  VERIFICATION_REPORT: "Verification Report",
-  COMPENSATION_DOCUMENT: "Compensation Document",
-  LEGAL_DOCUMENT: "Legal Document",
-  PHOTO: "Photo",
-  OTHER: "Other",
-};
-
 export function ParcelDocuments({ parcelId }: ParcelDocumentsProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadData, setUploadData] = useState({
-    name: "",
-    description: "",
-    category: "OTHER",
+    title: "",
+    documentType: DOCUMENT_TYPES.OTHER as string,
+    accessClass: DocumentAccessClass.INTERNAL as DocumentAccessClass,
   });
 
-  const { data, isLoading, refetch } = useDocuments({
-    entityType: "PARCEL",
-    entityId: parcelId,
-  });
+  const { data, isLoading, refetch } = useDocumentsByEntity(
+    DocumentEntityType.PARCEL,
+    parcelId
+  );
 
   const uploadDocument = useUploadDocument();
   const deleteDocument = useDeleteDocument();
@@ -72,7 +58,7 @@ export function ParcelDocuments({ parcelId }: ParcelDocumentsProps) {
       setSelectedFile(file);
       setUploadData((prev) => ({
         ...prev,
-        name: file.name,
+        title: file.name.replace(/\.[^/.]+$/, ""), // Remove extension
       }));
     }
   };
@@ -85,15 +71,19 @@ export function ParcelDocuments({ parcelId }: ParcelDocumentsProps) {
       setIsUploading(true);
       await uploadDocument.mutateAsync({
         file: selectedFile,
-        data: {
-          entityType: "PARCEL",
-          entityId: parcelId,
-          ...uploadData,
-        },
+        entityType: DocumentEntityType.PARCEL,
+        entityId: parcelId,
+        title: uploadData.title,
+        documentType: uploadData.documentType,
+        accessClass: uploadData.accessClass,
       });
       // Reset form
       setSelectedFile(null);
-      setUploadData({ name: "", description: "", category: "OTHER" });
+      setUploadData({
+        title: "",
+        documentType: DOCUMENT_TYPES.OTHER as string,
+        accessClass: DocumentAccessClass.INTERNAL as DocumentAccessClass,
+      });
       refetch();
     } catch (error) {
       console.error("Upload failed:", error);
@@ -190,58 +180,64 @@ export function ParcelDocuments({ parcelId }: ParcelDocumentsProps) {
               {/* Name */}
               <div>
                 <label className="block text-sm font-medium text-muted mb-1">
-                  Document Name
+                  Document Title
                 </label>
                 <input
                   type="text"
-                  value={uploadData.name}
+                  value={uploadData.title}
                   onChange={(e) =>
-                    setUploadData((prev) => ({ ...prev, name: e.target.value }))
+                    setUploadData((prev) => ({ ...prev, title: e.target.value }))
                   }
                   className="w-full px-3 py-2 rounded-lg border border-paper-line bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-sm"
                   required
                 />
               </div>
 
-              {/* Category */}
+              {/* Document Type */}
               <div>
                 <label className="block text-sm font-medium text-muted mb-1">
-                  Category
+                  Document Type
                 </label>
                 <select
-                  value={uploadData.category}
+                  value={uploadData.documentType}
                   onChange={(e) =>
                     setUploadData((prev) => ({
                       ...prev,
-                      category: e.target.value,
+                      documentType: e.target.value,
                     }))
                   }
                   className="w-full px-3 py-2 rounded-lg border border-paper-line bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-sm"
                 >
-                  {DOCUMENT_CATEGORIES.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {CATEGORY_LABELS[cat] || cat}
-                    </option>
-                  ))}
+                  <option value={DOCUMENT_TYPES.SURVEY_MAP}>Survey Map</option>
+                  <option value={DOCUMENT_TYPES.LAND_TITLE}>Land Title</option>
+                  <option value={DOCUMENT_TYPES.SALE_DEED}>Sale Deed</option>
+                  <option value={DOCUMENT_TYPES.MUTATION_RECORD}>Mutation Record</option>
+                  <option value={DOCUMENT_TYPES.FIELD_PHOTO}>Field Photo</option>
+                  <option value={DOCUMENT_TYPES.BOUNDARY_VERIFICATION}>Boundary Verification</option>
+                  <option value={DOCUMENT_TYPES.OTHER}>Other</option>
                 </select>
               </div>
 
-              {/* Description */}
+              {/* Access Class */}
               <div>
                 <label className="block text-sm font-medium text-muted mb-1">
-                  Description (Optional)
+                  Access Level
                 </label>
-                <textarea
-                  value={uploadData.description}
+                <select
+                  value={uploadData.accessClass}
                   onChange={(e) =>
                     setUploadData((prev) => ({
                       ...prev,
-                      description: e.target.value,
+                      accessClass: e.target.value as DocumentAccessClass,
                     }))
                   }
-                  rows={2}
-                  className="w-full px-3 py-2 rounded-lg border border-paper-line bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-sm resize-none"
-                />
+                  className="w-full px-3 py-2 rounded-lg border border-paper-line bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-sm"
+                >
+                  <option value={DocumentAccessClass.PUBLIC}>Public</option>
+                  <option value={DocumentAccessClass.INTERNAL}>Internal</option>
+                  <option value={DocumentAccessClass.RESTRICTED}>Restricted</option>
+                  <option value={DocumentAccessClass.CONFIDENTIAL}>Confidential</option>
+                </select>
               </div>
 
               {/* Submit */}
@@ -300,26 +296,23 @@ export function ParcelDocuments({ parcelId }: ParcelDocumentsProps) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h5 className="text-sm font-medium text-text truncate">
-                      {doc.name}
+                      {doc.title}
                     </h5>
-                    {doc.description && (
-                      <p className="text-xs text-muted mt-0.5 line-clamp-1">
-                        {doc.description}
-                      </p>
-                    )}
                     <div className="flex items-center gap-2 mt-1">
-                      {doc.category && (
-                        <Badge variant="default" size="sm">
-                          {CATEGORY_LABELS[doc.category] || doc.category}
-                        </Badge>
+                      <Badge variant="default" size="sm">
+                        {doc.documentType}
+                      </Badge>
+                      {doc.currentVersion && (
+                        <>
+                          <span className="text-xs text-muted">
+                            {formatFileSize(Number(doc.currentVersion.sizeBytes))}
+                          </span>
+                          <span className="text-xs text-muted">•</span>
+                          <span className="text-xs text-muted">
+                            {formatDate(doc.createdAt)}
+                          </span>
+                        </>
                       )}
-                      <span className="text-xs text-muted">
-                        {formatFileSize(doc.fileSize)}
-                      </span>
-                      <span className="text-xs text-muted">•</span>
-                      <span className="text-xs text-muted">
-                        {formatDate(doc.uploadedAt)}
-                      </span>
                     </div>
                   </div>
                 </div>
