@@ -1,9 +1,10 @@
 "use client";
 
 import { UserButton, useUser } from "@clerk/nextjs";
-import { Bell, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { useCurrentUser } from "@/hooks/useUser";
 import { RoleBadge } from "@/components/auth/RoleBadge";
+import { NotificationBell } from "@/components/notifications";
 
 export function Header() {
   const { user: clerkUser, isLoaded: clerkLoaded } = useUser();
@@ -26,10 +27,7 @@ export function Header() {
       {/* Right Section */}
       <div className="flex items-center gap-4 ml-6">
         {/* Notifications */}
-        <button className="relative p-2 rounded-lg hover:bg-paper-dim transition-colors">
-          <Bell className="w-5 h-5 text-muted" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-clay-500 rounded-full" />
-        </button>
+        <NotificationBell />
 
         {/* User Info & Avatar */}
         <div className="flex items-center gap-3">
