@@ -101,7 +101,11 @@ export default function ProjectDetailPage({
     return (
       <div className="space-y-6">
         <Link href="/dashboard/projects">
-          <Button variant="ghost" size="sm" icon={<ArrowLeft className="w-4 h-4" />}>
+          <Button
+            variant="ghost"
+            size="sm"
+            icon={<ArrowLeft className="w-4 h-4" />}
+          >
             Back to Projects
           </Button>
         </Link>
@@ -118,7 +122,11 @@ export default function ProjectDetailPage({
       {/* Header */}
       <div>
         <Link href="/dashboard/projects">
-          <Button variant="ghost" size="sm" icon={<ArrowLeft className="w-4 h-4" />}>
+          <Button
+            variant="ghost"
+            size="sm"
+            icon={<ArrowLeft className="w-4 h-4" />}
+          >
             Back to Projects
           </Button>
         </Link>
@@ -204,6 +212,28 @@ export default function ProjectDetailPage({
                 </Button>
               </Link>
             </CanView>
+
+            <CanView permission={Permission.PROJECT_UPDATE}>
+              <Link href={`/dashboard/projects/${id}/edit`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  icon={<Edit className="w-4 h-4" />}
+                >
+                  Edit
+                </Button>
+              </Link>
+            </CanView>
+
+            <Link href={`/dashboard/projects/${id}/dashboard`}>
+              <Button
+                variant="outline"
+                size="sm"
+                icon={<Building2 className="w-4 h-4" />}
+              >
+                Dashboard
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -229,7 +259,9 @@ export default function ProjectDetailPage({
             <CardContent className="space-y-4">
               {project.description && (
                 <div>
-                  <p className="text-sm font-medium text-muted mb-1">Description</p>
+                  <p className="text-sm font-medium text-muted mb-1">
+                    Description
+                  </p>
                   <p className="text-base text-text">{project.description}</p>
                 </div>
               )}
@@ -358,21 +390,33 @@ export default function ProjectDetailPage({
             </CardHeader>
             <CardContent className="space-y-2">
               <Link href={`/dashboard/gis?project=${id}`}>
-                <Button variant="outline" size="sm" className="w-full justify-start">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start"
+                >
                   <MapPin className="w-4 h-4 mr-2" />
                   View on Map
                 </Button>
               </Link>
 
               <Link href={`/dashboard/parcels?project=${id}`}>
-                <Button variant="outline" size="sm" className="w-full justify-start">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start"
+                >
                   <Building2 className="w-4 h-4 mr-2" />
                   View Parcels
                 </Button>
               </Link>
 
               <Link href={`/dashboard/documents?project=${id}`}>
-                <Button variant="outline" size="sm" className="w-full justify-start">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start"
+                >
                   <FileText className="w-4 h-4 mr-2" />
                   Documents
                 </Button>
@@ -385,7 +429,9 @@ export default function ProjectDetailPage({
               <div className="text-sm space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-muted">Project ID</span>
-                  <span className="font-mono text-xs text-text">{project.id}</span>
+                  <span className="font-mono text-xs text-text">
+                    {project.id}
+                  </span>
                 </div>
               </div>
             </CardContent>

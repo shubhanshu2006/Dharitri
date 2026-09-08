@@ -46,9 +46,9 @@ import {
 export default function ProjectDashboardPage({
   params,
 }: {
-  params: Promise<{ projectId: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { projectId } = use(params);
+  const { id: projectId } = use(params);
   const { data: metrics, isLoading, error, refetch } = useProjectDashboard(projectId);
 
   if (isLoading) {
@@ -129,10 +129,10 @@ export default function ProjectDashboardPage({
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center gap-4 mb-4">
-            <Link href="/dashboard/executive">
+            <Link href={`/dashboard/projects/${projectId}`}>
               <Button variant="outline" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
+                Back to Project
               </Button>
             </Link>
           </div>
