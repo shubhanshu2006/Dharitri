@@ -17,7 +17,14 @@ export default function DashboardLayout({
         <Header />
 
         {/* Page Content */}
-        <main className="flex-1 p-6 lg:p-8 overflow-auto">{children}</main>
+        <main
+          id="main-content"
+          role="main"
+          tabIndex={-1}
+          className="flex-1 p-6 lg:p-8 overflow-auto focus:outline-none"
+        >
+          {children}
+        </main>
       </div>
     </div>
   );

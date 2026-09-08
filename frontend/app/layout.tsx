@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Instrument_Sans, Instrument_Serif, Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { QueryProvider } from "@/providers/query-provider";
+import {
+  ScreenReaderAnnouncer,
+  SkipToContent,
+} from "@/components/accessibility";
 import "./globals.css";
 
 const instrumentSerif = Instrument_Serif({
@@ -35,6 +39,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         className={`${instrumentSerif.variable} ${instrumentSans.variable} ${inter.variable} h-full antialiased`}
       >
         <body className="min-h-full flex flex-col bg-paper text-text">
+          <SkipToContent />
+          <ScreenReaderAnnouncer />
           <QueryProvider>{children}</QueryProvider>
         </body>
       </html>
