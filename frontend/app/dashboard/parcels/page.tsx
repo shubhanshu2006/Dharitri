@@ -8,9 +8,11 @@ import { Permission } from "@/lib/constants/permissions";
 import {
   ParcelStatus,
   PARCEL_STATUS_LABELS,
+} from "@/lib/constants/parcels";
+import {
   ACQUISITION_STATUS_LABELS,
   AcquisitionStatus,
-} from "@/lib/constants/parcels";
+} from "@/lib/constants/acquisition";
 import { ParcelStatusBadge } from "@/components/parcels/ParcelStatusBadge";
 import {
   Card,

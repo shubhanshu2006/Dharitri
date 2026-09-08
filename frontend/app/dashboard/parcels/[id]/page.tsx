@@ -37,7 +37,7 @@ import { formatDate, formatArea } from "@/lib/utils";
 import {
   ACQUISITION_STATUS_LABELS,
   AcquisitionStatus,
-} from "@/lib/constants/parcels";
+} from "@/lib/constants/acquisition";
 
 export default function ParcelDetailPage({
   params,
