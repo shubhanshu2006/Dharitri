@@ -120,10 +120,18 @@ export function Sidebar() {
   });
 
   return (
-    <aside className="w-64 bg-white border-r border-paper-line flex flex-col">
+    <aside
+      className="w-64 bg-white border-r border-paper-line flex flex-col"
+      role="navigation"
+      aria-label="Main navigation"
+    >
       {/* Logo */}
       <div className="h-16 px-6 flex items-center border-b border-paper-line">
-        <Link href="/dashboard" className="flex items-center gap-2">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2"
+          aria-label="DHARITRI Dashboard Home"
+        >
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
             <span className="text-white font-bold text-sm">D</span>
           </div>
@@ -134,27 +142,29 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-6 px-3 overflow-y-auto">
-        <div className="space-y-1">
+      <nav className="flex-1 py-6 px-3 overflow-y-auto" aria-label="Primary">
+        <ul className="space-y-1" role="list">
           {visibleNavigation.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
-                  isActive
-                    ? "bg-emerald-50 text-emerald-700 shadow-sm"
-                    : "text-muted hover:bg-paper-dim hover:text-text"
-                )}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                    isActive
+                      ? "bg-emerald-50 text-emerald-700 shadow-sm"
+                      : "text-muted hover:bg-paper-dim hover:text-text"
+                  )}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </Link>
+              </li>
             );
           })}
-        </div>
+        </ul>
       </nav>
 
       {/* Settings */}
@@ -167,6 +177,7 @@ export function Sidebar() {
               ? "bg-emerald-50 text-emerald-700"
               : "text-muted hover:bg-paper-dim hover:text-text"
           )}
+          aria-current={pathname === "/dashboard/settings" ? "page" : undefined}
         >
           <Settings className="w-5 h-5" />
           <span>Settings</span>

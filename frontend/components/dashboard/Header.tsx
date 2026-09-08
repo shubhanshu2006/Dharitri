@@ -11,15 +11,26 @@ export function Header() {
   const { data: dharitriUser, isLoading: dharitriLoading } = useCurrentUser();
 
   return (
-    <header className="h-16 bg-white border-b border-paper-line px-6 flex items-center justify-between">
+    <header
+      className="h-16 bg-white border-b border-paper-line px-6 flex items-center justify-between"
+      role="banner"
+    >
       {/* Search */}
       <div className="flex-1 max-w-xl">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
+          <label htmlFor="global-search" className="sr-only">
+            Search projects, parcels, and cases
+          </label>
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted"
+            aria-hidden="true"
+          />
           <input
+            id="global-search"
             type="search"
             placeholder="Search projects, parcels, cases..."
             className="w-full pl-10 pr-4 py-2 rounded-lg border border-paper-line bg-paper focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-sm"
+            aria-label="Search projects, parcels, and cases"
           />
         </div>
       </div>
