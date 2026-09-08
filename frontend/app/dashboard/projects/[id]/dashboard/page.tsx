@@ -3,6 +3,7 @@
 import { use } from "react";
 import Link from "next/link";
 import { useProjectDashboard } from "@/hooks/useDashboard";
+import { useProjectRisk, useProjectAnomalies } from "@/hooks/useAI";
 import {
   formatCurrency,
   formatNumber,
@@ -16,6 +17,7 @@ import {
   ProgressBar,
   MultiProgressBar,
 } from "@/components/dashboard";
+import { RiskScoreCard } from "@/components/ai";
 import {
   Loading,
   ErrorMessage,
@@ -41,6 +43,7 @@ import {
   TrendingUp,
   AlertTriangle,
   Target,
+  Brain,
 } from "lucide-react";
 
 export default function ProjectDashboardPage({
@@ -50,6 +53,10 @@ export default function ProjectDashboardPage({
 }) {
   const { id: projectId } = use(params);
   const { data: metrics, isLoading, error, refetch } = useProjectDashboard(projectId);
+  
+  // Fetch AI risk assessment
+  const { data: riskScore } = useProjectRisk(projectId, !!metrics);
+  const { data: anomalies } = useProjectAnomalies(projectId, !!metrics);
 
   if (isLoading) {
     return (
@@ -216,6 +223,107 @@ export default function ProjectDashboardPage({
             color={metrics.milestones.overdue > 0 ? "danger" : "success"}
           />
         </div>
+
+        {/* AI Risk Assessment */}
+        {riskScore && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1">
+              <RiskScoreCard riskScore={riskScore} title="AI Risk Assessment" />
+            </div>
+            <div className="lg:col-span-2">
+              <Card className="h-full">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-xl font-['Instrument_Sans'] flex items-center gap-2">
+                      <Brain className="h-6 w-6 text-purple-600" />
+                      Risk Insights
+                    </CardTitle>
+                    <Link href={`/dashboard/ai/${projectId}`}>
+                      <Button variant="outline" size="sm">
+                        View Full Analysis
+                      </Button>
+                    </Link>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {/* Top Risk Factors */}
+                    {riskScore.factors.length > 0 ? (
+                      <>
+                        <p className="text-sm text-gray-600 mb-3">
+                          Top risk factors affecting this project:
+                        </p>
+                        <div className="space-y-3">
+                          {riskScore.factors.slice(0, 3).map((factor, index) => (
+                            <div
+                              key={index}
+                              className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
+                            >
+                              <div className="flex-1">
+                                <div className="flex items-center justify-between mb-1">
+                                  <h4 className="font-medium text-sm text-gray-900">
+                                    {factor.name
+                                      .split("_")
+                                      .map(
+                                        (word) =>
+                                          word.charAt(0).toUpperCase() + word.slice(1)
+                                      )
+                                      .join(" ")}
+                                  </h4>
+                                  <span className="text-sm font-bold text-red-600">
+                                    +{Math.round(factor.contribution)}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-gray-600">
+                                  {factor.explanation}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        {riskScore.factors.length > 3 && (
+                          <p className="text-xs text-gray-500 text-center">
+                            +{riskScore.factors.length - 3} more factors
+                          </p>
+                        )}
+                      </>
+                    ) : (
+                      <div className="text-center py-6">
+                        <CheckCircle className="h-12 w-12 text-emerald-600 mx-auto mb-2" />
+                        <p className="text-sm text-emerald-900 font-medium">
+                          No risk factors detected
+                        </p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          Project is on track
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Anomalies Count */}
+                    {anomalies && anomalies.length > 0 && (
+                      <div className="pt-4 border-t border-gray-200">
+                        <div className="flex items-center justify-between p-3 bg-amber-50 rounded-lg">
+                          <div className="flex items-center gap-2">
+                            <AlertTriangle className="h-5 w-5 text-amber-600" />
+                            <span className="text-sm font-medium text-amber-900">
+                              {anomalies.length} Anomal
+                              {anomalies.length > 1 ? "ies" : "y"} Detected
+                            </span>
+                          </div>
+                          <Link href={`/dashboard/ai/${projectId}`}>
+                            <Button variant="ghost" size="sm" className="text-amber-700">
+                              View Details
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
 
         {/* Case Status Breakdown */}
         <Card>
