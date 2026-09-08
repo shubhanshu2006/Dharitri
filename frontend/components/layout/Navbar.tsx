@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NAV_LINKS } from "@/lib/constants";
+import Image from "next/image";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -77,7 +78,13 @@ export function Navbar() {
             <span className="absolute inset-0 animate-pulse-ring rounded-full bg-emerald-400" />
             <span className="relative h-2.5 w-2.5 rounded-full bg-emerald-400" />
           </span>
-          Dharitri
+          <Image
+            src="/images/Logo.png"
+            alt="DHARITRI"
+            width={102}
+            height={102}
+            className="w-24 h-8 "
+          />
         </Link>
 
         <ul
