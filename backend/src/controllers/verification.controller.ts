@@ -4,6 +4,113 @@ import routingService from "../services/routing.service.js";
 import { successResponse } from "../utils/response.js";
 
 export class VerificationController {
+  async getVerificationCases(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { page, limit, search, status, projectId, assignedUserId } =
+        req.query;
+
+      const result = await verificationService.getVerificationCases({
+        page: page ? parseInt(page as string) : undefined,
+        limit: limit ? parseInt(limit as string) : undefined,
+        search: search as string,
+        status: status as any,
+        projectId: projectId as string,
+        assignedUserId: assignedUserId as string,
+      });
+
+      return successResponse(res, result, "Verification cases retrieved");
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getVerificationCase(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = req.params.id as string;
+      const verificationCase =
+        await verificationService.getVerificationCase(id);
+      return successResponse(
+        res,
+        verificationCase,
+        "Verification case retrieved",
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async createVerificationCase(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { acquisitionCaseId, assignedUserId } = req.body;
+      const verificationCase = await verificationService.createVerificationCase(
+        {
+          acquisitionCaseId,
+          assignedUserId,
+        },
+      );
+      return successResponse(
+        res,
+        verificationCase,
+        "Verification case created",
+        201,
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async runVerificationChecks(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = req.params.id as string;
+      const verificationCase =
+        await verificationService.runVerificationChecks(id);
+      return successResponse(
+        res,
+        verificationCase,
+        "Verification checks completed",
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async approveVerificationCase(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const id = req.params.id as string;
+      const verificationCase =
+        await verificationService.approveVerificationCase(id);
+      return successResponse(
+        res,
+        verificationCase,
+        "Verification case approved",
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async requestCorrection(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = req.params.id as string;
+      const { reason } = req.body;
+      const verificationCase = await verificationService.requestCorrection(
+        id,
+        reason,
+      );
+      return successResponse(res, verificationCase, "Correction requested");
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async verifyAcquisitionParcel(
     req: Request,
     res: Response,
