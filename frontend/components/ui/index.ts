@@ -12,6 +12,20 @@ export {
 export { Badge, type BadgeProps } from "./Badge";
 export { Alert, AlertTitle, AlertDescription, type AlertProps } from "./Alert";
 export {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  type DialogProps,
+  type DialogContentProps,
+  type DialogHeaderProps,
+  type DialogTitleProps,
+  type DialogDescriptionProps,
+  type DialogFooterProps,
+} from "./Dialog";
+export {
   Loading,
   LoadingSkeleton,
   LoadingCard,
