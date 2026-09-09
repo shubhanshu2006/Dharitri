@@ -1,6 +1,8 @@
 import { Router } from "express";
 import healthRoutes from "./health.routes.js";
 import authRoutes from "./auth.routes.js";
+import adminRoutes from "./admin.routes.js";
+import locationRoutes from "./location.routes.js";
 import projectRoutes from "./project.routes.js";
 import gisRoutes from "./gis.routes.js";
 import landRecordRoutes from "./land-record.routes.js";
@@ -25,6 +27,8 @@ const router = Router();
 export const healthRouter = healthRoutes;
 
 router.use("/auth", authRoutes);
+router.use("/admin", adminRoutes);
+router.use("/locations", locationRoutes);
 router.use("/projects", projectRoutes);
 router.use("/gis", gisRoutes);
 router.use("/land-records", landRecordRoutes);

@@ -9,4 +9,8 @@ router.get("/me", authLimiter, requireAuth, (req, res, next) =>
   authController.getCurrentUser(req, res, next),
 );
 
+router.patch("/me/access-request", authLimiter, requireAuth, (req, res, next) =>
+  authController.updateAccessRequest(req, res, next),
+);
+
 export default router;

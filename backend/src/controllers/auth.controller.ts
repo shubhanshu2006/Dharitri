@@ -20,6 +20,34 @@ export class AuthController {
       next(error);
     }
   }
+
+  async updateAccessRequest(req: Request, res: Response, next: NextFunction) {
+    try {
+      const auth = getAuth(req);
+
+      if (!auth.userId) {
+        throw new UnauthorizedError("Not authenticated");
+      }
+
+      const { requestedDepartment, requestedRole, requestedStateId, requestedDistrictId, requestReason } = req.body;
+
+      // Get current user
+      const currentUser = await userService.getUserWithPermissions(auth.userId);
+
+      // Update access request
+      await userService.updateUserAccessRequest(currentUser.id, {
+        requestedDepartment,
+        requestedRole,
+        requestedStateId,
+        requestedDistrictId,
+        requestReason,
+      });
+
+      sendSuccess(res, { message: "Access request updated successfully" });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const authController = new AuthController();
