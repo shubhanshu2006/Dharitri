@@ -5,6 +5,12 @@ import { Permission } from "../constants/permissions.js";
 
 const router = Router();
 
+router.get(
+  "/cases",
+  requirePermission(Permission.ACQUISITION_VIEW),
+  acquisitionController.listAcquisitionCases.bind(acquisitionController),
+);
+
 router.post(
   "/",
   requirePermission(Permission.ACQUISITION_CREATE),

@@ -41,7 +41,15 @@ export class RRController {
     try {
       const validatedQuery = rrCaseQuerySchema.parse(req.query);
       const result = await rrService.listRRCases(validatedQuery);
-      return successResponse(res, result);
+      return successResponse(res, {
+        data: result.data,
+        pagination: {
+          page: result.page,
+          limit: result.pageSize,
+          total: result.total,
+          totalPages: Math.ceil(result.total / result.pageSize),
+        },
+      });
     } catch (error) {
       next(error);
     }

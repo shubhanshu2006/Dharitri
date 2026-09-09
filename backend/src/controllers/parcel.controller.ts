@@ -33,7 +33,19 @@ export class ParcelController {
     try {
       const validatedQuery = parcelQuerySchema.parse(req.query);
       const result = await parcelService.getParcels(validatedQuery);
-      return successResponse(res, result, "Parcels retrieved successfully");
+      return successResponse(
+        res,
+        {
+          data: result.parcels,
+          pagination: {
+            page: result.page,
+            limit: result.limit,
+            total: result.total,
+            totalPages: result.totalPages,
+          },
+        },
+        "Parcels retrieved successfully",
+      );
     } catch (error) {
       next(error);
     }

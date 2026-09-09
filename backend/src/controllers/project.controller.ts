@@ -31,7 +31,19 @@ export class ProjectController {
     try {
       const validatedQuery = projectQuerySchema.parse(req.query);
       const result = await projectService.getProjects(validatedQuery);
-      return successResponse(res, result, "Projects retrieved successfully");
+      
+      // Transform response to match frontend expectations
+      const response = {
+        data: result.projects,
+        pagination: {
+          page: result.page,
+          limit: result.limit,
+          total: result.total,
+          totalPages: result.totalPages,
+        },
+      };
+      
+      return successResponse(res, response, "Projects retrieved successfully");
     } catch (error) {
       next(error);
     }

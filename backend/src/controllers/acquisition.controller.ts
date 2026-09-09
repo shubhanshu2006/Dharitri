@@ -5,10 +5,21 @@ import {
   createAcquisitionParcelSchema,
   updateAcquisitionParcelSchema,
   transitionReasonSchema,
+  acquisitionCaseQuerySchema,
 } from "../validators/acquisition.validator.js";
 import { successResponse } from "../utils/response.js";
 
 export class AcquisitionController {
+  async listAcquisitionCases(req: Request, res: Response, next: NextFunction) {
+    try {
+      const validatedQuery = acquisitionCaseQuerySchema.parse(req.query);
+      const result = await acquisitionService.listAcquisitionCases(validatedQuery);
+      return successResponse(res, result, "Acquisition cases retrieved successfully");
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async createAcquisitionParcel(
     req: Request,
     res: Response,

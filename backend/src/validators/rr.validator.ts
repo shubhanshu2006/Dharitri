@@ -30,7 +30,7 @@ export const rrCaseQuerySchema = z.object({
   projectId: z.string().uuid().optional(),
   familyId: z.string().uuid().optional(),
   status: z.string().optional(),
-  applicable: z.boolean().optional(),
-  skip: z.number().min(0).optional(),
-  take: z.number().min(1).max(100).optional(),
+  applicable: z.coerce.boolean().optional(),
+  skip: z.coerce.number().int().min(0).optional(),
+  take: z.coerce.number().int().min(1).max(100).optional(),
 });

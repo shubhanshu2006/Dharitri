@@ -13,6 +13,14 @@ export const updateAcquisitionParcelSchema = z.object({
   landCategory: z.string().max(120).optional(),
 });
 
+export const acquisitionCaseQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+  search: z.string().optional(),
+  status: z.string().optional(),
+  projectId: z.string().uuid().optional(),
+});
+
 export const transitionReasonSchema = z.object({
   reason: z.string().min(1).max(500),
 });

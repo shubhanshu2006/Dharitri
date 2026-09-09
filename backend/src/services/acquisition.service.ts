@@ -68,6 +68,67 @@ export class AcquisitionService {
     return acquisitionParcel;
   }
 
+  async listAcquisitionCases(params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: string;
+    projectId?: string;
+  }) {
+    const page = params.page || 1;
+    const limit = params.limit || 20;
+    const where: any = {};
+
+    if (params.status) where.status = params.status;
+    if (params.projectId) {
+      where.acquisitionParcel = { projectId: params.projectId };
+    }
+    if (params.search) {
+      where.acquisitionParcel = {
+        ...(where.acquisitionParcel || {}),
+        acquisitionReference: { contains: params.search, mode: "insensitive" },
+      };
+    }
+
+    const [cases, total] = await Promise.all([
+      prisma.acquisitionCase.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          acquisitionParcel: {
+            include: {
+              project: { select: { id: true, name: true, projectCode: true } },
+              cadastralParcel: {
+                select: {
+                  id: true,
+                  parcelReference: true,
+                  surveyNumber: true,
+                  ulpin: true,
+                },
+              },
+            },
+          },
+          currentAssignee: {
+            select: { name: true, email: true },
+          },
+        },
+      }),
+      prisma.acquisitionCase.count({ where }),
+    ]);
+
+    return {
+      data: cases,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
   async getAcquisitionParcel(id: string) {
     const acquisitionParcel = await prisma.acquisitionParcel.findUnique({
       where: { id },

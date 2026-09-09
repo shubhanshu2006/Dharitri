@@ -46,7 +46,15 @@ export class BeneficiaryController {
     try {
       const validatedQuery = beneficiaryQuerySchema.parse(req.query);
       const result = await beneficiaryService.listBeneficiaries(validatedQuery);
-      return successResponse(res, result);
+      return successResponse(res, {
+        data: result.data,
+        pagination: {
+          page: result.page,
+          limit: result.pageSize,
+          total: result.total,
+          totalPages: Math.ceil(result.total / result.pageSize),
+        },
+      });
     } catch (error) {
       next(error);
     }
