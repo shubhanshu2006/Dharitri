@@ -83,7 +83,8 @@ export function Navbar() {
             alt="DHARITRI"
             width={102}
             height={102}
-            className="w-30 h-11 "
+            className="w-30 h-11"
+            loading="eager"
           />
         </Link>
 

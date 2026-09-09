@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { HERO_CATEGORIES, HERO_MARKERS } from "@/lib/constants";
 import { CATEGORY_ICONS } from "@/lib/icons";
 import { PillButton } from "@/components/ui/PillButton";
+import Image from "next/image";
 
 type InfraBannerProps = {
   id?: string;
@@ -69,12 +70,24 @@ export function InfraBanner({
     <Wrapper
       id={id}
       className={`relative flex items-center overflow-hidden bg-ink ${className}`}
+      style={{ background: fallbackGradient }}
     >
       {/* Background photograph, shown as-is — no filters, no overlays */}
       <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url('${imageUrl}'), ${fallbackGradient}` }}
-      />
+        className="absolute inset-0"
+        aria-hidden="true"
+      >
+        <Image
+          src={imageUrl}
+          alt=""
+          loading="eager"
+          decoding="async"
+          width={1920}
+          height={1080}
+          sizes="100vw"
+          className="h-full w-full object-cover object-center"
+        />
+      </div>
 
       {/* Scrim so overlaid text stays readable against the photo */}
       {overlay && (
