@@ -16,7 +16,8 @@
     "db:seed:cadastral": "tsx src/database/seeds/cadastral-only.ts",
     "db:seed:locations": "tsx src/database/seeds/location-only.ts",
     "db:seed:rbac": "tsx src/database/seeds/rbac-only.ts",
-    "db:seed:compensation": "tsx src/database/seeds/compensation-ruleset-only.ts"
+    "db:seed:compensation": "tsx src/database/seeds/compensation-ruleset-only.ts",
+    "db:seed:superadmin": "tsx src/database/seeds/super-admin.seed.ts"
   },
   "keywords": [],
   "author": "Shubhanshu Singh",
@@ -37,6 +38,7 @@
     "@aws-sdk/client-s3": "^3.705.0",
     "@aws-sdk/s3-request-presigner": "^3.705.0",
     "@clerk/express": "^1.4.3",
+    "@getbrevo/brevo": "^2.2.0",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "cookie-parser": "^1.4.7",
