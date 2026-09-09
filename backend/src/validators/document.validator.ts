@@ -15,8 +15,8 @@ export const documentQuerySchema = z.object({
   entityId: z.string().uuid().optional(),
   documentType: z.string().optional(),
   status: z.string().optional(),
-  skip: z.number().min(0).optional(),
-  take: z.number().min(1).max(100).optional(),
+  skip: z.coerce.number().int().min(0).optional(),
+  take: z.coerce.number().int().min(1).max(100).optional(),
 });
 
 export const downloadQuerySchema = z.object({

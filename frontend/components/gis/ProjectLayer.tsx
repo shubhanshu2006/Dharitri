@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import maplibregl from "maplibre-gl";
 import type { GeoJSONFeatureCollection } from "@/types/api";
 
@@ -11,59 +11,47 @@ interface ProjectLayerProps {
   onParcelClick?: (parcelId: string, properties: any) => void;
 }
 
+const EMPTY_COLLECTION: GeoJSONFeatureCollection = {
+  type: "FeatureCollection",
+  features: [],
+};
+
 export function ProjectLayer({
   map,
   boundary,
   parcels,
   onParcelClick,
 }: ProjectLayerProps) {
-  // Add project boundary layer
+  const onParcelClickRef = useRef(onParcelClick);
+  const fittedBoundaryRef = useRef<GeoJSONFeatureCollection | undefined>(
+    undefined,
+  );
+
+  onParcelClickRef.current = onParcelClick;
+
   useEffect(() => {
-    if (!map || !boundary || !boundary.features || boundary.features.length === 0) return;
+    if (!map) return;
 
-    const sourceId = "project-boundary";
-    const layerId = "project-boundary-layer";
-    const outlineId = "project-boundary-outline";
-
-    // Wait for map to be fully loaded
-    if (!map.isStyleLoaded()) {
-      map.once("styledata", () => {
-        addBoundaryLayers();
-      });
-    } else {
-      addBoundaryLayers();
-    }
-
-    function addBoundaryLayers() {
-      if (!map || !boundary) return;
-
-      // Add source
-      if (!map.getSource(sourceId)) {
-        map.addSource(sourceId, {
+    const addLayers = () => {
+      if (!map.getSource("project-boundary")) {
+        map.addSource("project-boundary", {
           type: "geojson",
-          data: boundary as any,
+          data: EMPTY_COLLECTION as any,
         });
       }
-
-      // Add fill layer
-      if (!map.getLayer(layerId)) {
+      if (!map.getLayer("project-boundary-layer")) {
         map.addLayer({
-          id: layerId,
+          id: "project-boundary-layer",
           type: "fill",
-          source: sourceId,
-          paint: {
-            "fill-color": "#10b981",
-            "fill-opacity": 0.1,
-          },
+          source: "project-boundary",
+          paint: { "fill-color": "#10b981", "fill-opacity": 0.1 },
         });
       }
-
-      // Add outline layer
-      if (!map.getLayer(outlineId)) {
+      if (!map.getLayer("project-boundary-outline")) {
         map.addLayer({
-          id: outlineId,
+          id: "project-boundary-outline",
           type: "line",
-          source: sourceId,
+          source: "project-boundary",
           paint: {
             "line-color": "#10b981",
             "line-width": 3,
@@ -71,166 +59,119 @@ export function ProjectLayer({
           },
         });
       }
-
-      // Fit bounds to boundary
-      if (boundary.features && boundary.features.length > 0) {
-        const bounds = new maplibregl.LngLatBounds();
-        boundary.features.forEach((feature) => {
-          if (feature.geometry.type === "Polygon") {
-            feature.geometry.coordinates[0].forEach((coord: number[]) => {
-              bounds.extend(coord as [number, number]);
-            });
-          } else if (feature.geometry.type === "MultiPolygon") {
-            feature.geometry.coordinates.forEach((polygon: number[][][]) => {
-              polygon[0].forEach((coord: number[]) => {
-                bounds.extend(coord as [number, number]);
-              });
-            });
-          }
-        });
-        map.fitBounds(bounds, { padding: 50, duration: 1000 });
-      }
-    }
-
-    return () => {
-      if (map && map.getLayer(layerId)) {
-        map.removeLayer(layerId);
-      }
-      if (map && map.getLayer(outlineId)) {
-        map.removeLayer(outlineId);
-      }
-      if (map && map.getSource(sourceId)) {
-        map.removeSource(sourceId);
-      }
-    };
-  }, [map, boundary]);
-
-  // Add parcels layer
-  useEffect(() => {
-    if (!map || !parcels || !parcels.features || parcels.features.length === 0) return;
-
-    const sourceId = "parcels";
-    const fillLayerId = "parcels-fill";
-    const outlineLayerId = "parcels-outline";
-
-    // Wait for map to be fully loaded
-    if (!map.isStyleLoaded()) {
-      map.once("styledata", () => {
-        addParcelLayers();
-      });
-    } else {
-      addParcelLayers();
-    }
-
-    function addParcelLayers() {
-      if (!map || !parcels) return;
-
-      // Add source
-      if (!map.getSource(sourceId)) {
-        map.addSource(sourceId, {
+      if (!map.getSource("parcels")) {
+        map.addSource("parcels", {
           type: "geojson",
-          data: parcels as any,
+          data: EMPTY_COLLECTION as any,
         });
-      } else {
-        const source = map.getSource(sourceId) as maplibregl.GeoJSONSource;
-        source.setData(parcels as any);
       }
-
-      // Add fill layer with status-based colors
-      if (!map.getLayer(fillLayerId)) {
+      if (!map.getLayer("parcels-fill")) {
         map.addLayer({
-          id: fillLayerId,
+          id: "parcels-fill",
           type: "fill",
-          source: sourceId,
+          source: "parcels",
           paint: {
             "fill-color": [
               "match",
               ["get", "acquisitionStatus"],
               "ACQUIRED",
-              "#10b981", // emerald
+              "#10b981",
               "IN_ACQUISITION",
-              "#f59e0b", // amber
+              "#f59e0b",
               "IDENTIFIED",
-              "#06b6d4", // cyan
+              "#06b6d4",
               "DISPUTED",
-              "#ef4444", // red
-              "#94a3b8", // gray (default)
+              "#ef4444",
+              "#94a3b8",
             ],
             "fill-opacity": 0.6,
           },
         });
       }
-
-      // Add outline layer
-      if (!map.getLayer(outlineLayerId)) {
+      if (!map.getLayer("parcels-outline")) {
         map.addLayer({
-          id: outlineLayerId,
+          id: "parcels-outline",
           type: "line",
-          source: sourceId,
-          paint: {
-            "line-color": "#ffffff",
-            "line-width": 1,
-          },
+          source: "parcels",
+          paint: { "line-color": "#ffffff", "line-width": 1 },
         });
       }
 
-      // Add hover effect
       let hoveredParcelId: string | null = null;
-
-      map.on("mousemove", fillLayerId, (e) => {
-        if (e.features && e.features.length > 0) {
-          map.getCanvas().style.cursor = "pointer";
-
-          if (hoveredParcelId) {
-            map.setFeatureState(
-              { source: sourceId, id: hoveredParcelId },
-              { hover: false }
-            );
-          }
-
-          hoveredParcelId = e.features[0].id as string;
+      map.on("mousemove", "parcels-fill", (event) => {
+        if (!event.features?.length) return;
+        map.getCanvas().style.cursor = "pointer";
+        if (hoveredParcelId) {
           map.setFeatureState(
-            { source: sourceId, id: hoveredParcelId },
-            { hover: true }
+            { source: "parcels", id: hoveredParcelId },
+            { hover: false },
           );
         }
+        hoveredParcelId = event.features[0].id as string;
+        map.setFeatureState(
+          { source: "parcels", id: hoveredParcelId },
+          { hover: true },
+        );
       });
-
-      map.on("mouseleave", fillLayerId, () => {
+      map.on("mouseleave", "parcels-fill", () => {
         map.getCanvas().style.cursor = "";
         if (hoveredParcelId) {
           map.setFeatureState(
-            { source: sourceId, id: hoveredParcelId },
-            { hover: false }
+            { source: "parcels", id: hoveredParcelId },
+            { hover: false },
           );
         }
         hoveredParcelId = null;
       });
+      map.on("click", "parcels-fill", (event) => {
+        const feature = event.features?.[0];
+        if (!feature) return;
+        const parcelId = feature.properties?.id || feature.id;
+        onParcelClickRef.current?.(parcelId as string, feature.properties);
+      });
+    };
 
-      // Add click handler
-      if (onParcelClick) {
-        map.on("click", fillLayerId, (e) => {
-          if (e.features && e.features.length > 0) {
-            const feature = e.features[0];
-            const parcelId = feature.properties?.id || feature.id;
-            onParcelClick(parcelId as string, feature.properties);
-          }
+    if (map.isStyleLoaded()) {
+      addLayers();
+    } else {
+      map.once("styledata", addLayers);
+    }
+  }, [map]);
+
+  useEffect(() => {
+    if (!map || !map.isStyleLoaded()) return;
+    const source = map.getSource("project-boundary") as
+      | maplibregl.GeoJSONSource
+      | undefined;
+    if (!source) return;
+    source.setData((boundary || EMPTY_COLLECTION) as any);
+
+    if (!boundary?.features.length || fittedBoundaryRef.current === boundary) return;
+    const bounds = new maplibregl.LngLatBounds();
+    boundary.features.forEach((feature) => {
+      if (feature.geometry.type === "Polygon") {
+        feature.geometry.coordinates[0].forEach((coord: number[]) => {
+          bounds.extend(coord as [number, number]);
+        });
+      } else if (feature.geometry.type === "MultiPolygon") {
+        feature.geometry.coordinates.forEach((polygon: number[][][]) => {
+          polygon[0].forEach((coord: number[]) => {
+            bounds.extend(coord as [number, number]);
+          });
         });
       }
-    }
+    });
+    fittedBoundaryRef.current = boundary;
+    map.fitBounds(bounds, { padding: 50, duration: 0 });
+  }, [map, boundary]);
 
-    return () => {
-      if (map && map.getLayer(fillLayerId)) {
-        map.removeLayer(fillLayerId);
-      }
-      if (map && map.getLayer(outlineLayerId)) {
-        map.removeLayer(outlineLayerId);
-      }
-      if (map && map.getSource(sourceId)) {
-        map.removeSource(sourceId);
-      }
-    };
-  }, [map, parcels, onParcelClick]);
+  useEffect(() => {
+    if (!map || !map.isStyleLoaded()) return;
+    const source = map.getSource("parcels") as
+      | maplibregl.GeoJSONSource
+      | undefined;
+    source?.setData((parcels || EMPTY_COLLECTION) as any);
+  }, [map, parcels]);
 
   return null;
 }

@@ -60,7 +60,7 @@ function GISPageContent() {
     <div className="flex h-[calc(100vh-4rem)] gap-4">
       {/* Sidebar */}
       {showSidebar && (
-        <div className="w-80 flex-shrink-0 space-y-4 overflow-y-auto">
+        <div className="w-80 shrink-0 space-y-4 overflow-y-auto">
           {/* Header */}
           <Card variant="elevated">
             <CardHeader>

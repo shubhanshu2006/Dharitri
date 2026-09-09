@@ -19,6 +19,7 @@ import {
   BarChart3,
   Sparkles,
   Settings,
+  Shield,
 } from "lucide-react";
 
 interface NavItem {
@@ -106,6 +107,12 @@ const navigation: NavItem[] = [
     href: "/dashboard/ai",
     icon: <Sparkles className="w-5 h-5" />,
     permission: Permission.AI_DECISION_SUPPORT_VIEW,
+  },
+  {
+    label: "Admin",
+    href: "/dashboard/admin/users",
+    icon: <Shield className="w-5 h-5" />,
+    permission: Permission.USER_MANAGE,
   },
 ];
 

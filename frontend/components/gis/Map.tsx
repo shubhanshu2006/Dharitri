@@ -4,6 +4,9 @@ import { useEffect, useRef } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
+const DEFAULT_CENTER: [number, number] = [78.9629, 20.5937];
+const DEFAULT_STYLE = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
+
 interface MapProps {
   initialCenter?: [number, number];
   initialZoom?: number;
@@ -13,14 +16,17 @@ interface MapProps {
 }
 
 export function Map({
-  initialCenter = [78.9629, 20.5937], // Center of India
+  initialCenter = DEFAULT_CENTER,
   initialZoom = 5,
   onLoad,
-  style = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+  style = DEFAULT_STYLE,
   className = "w-full h-full",
 }: MapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
+  const onLoadRef = useRef(onLoad);
+
+  onLoadRef.current = onLoad;
 
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
@@ -31,6 +37,8 @@ export function Map({
       style,
       center: initialCenter,
       zoom: initialZoom,
+      fadeDuration: 0,
+      refreshExpiredTiles: false,
       attributionControl: false,
     });
 
@@ -62,8 +70,8 @@ export function Map({
 
     // Call onLoad when map is ready
     map.current.on("load", () => {
-      if (onLoad && map.current) {
-        onLoad(map.current);
+      if (onLoadRef.current && map.current) {
+        onLoadRef.current(map.current);
       }
     });
 
@@ -74,7 +82,7 @@ export function Map({
         map.current = null;
       }
     };
-  }, [initialCenter, initialZoom, style, onLoad]);
+  }, []);
 
   return (
     <div

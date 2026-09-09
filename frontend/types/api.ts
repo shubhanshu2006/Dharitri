@@ -49,6 +49,8 @@ export interface User {
   clerkUserId: string;
   name: string;
   email: string;
+  status: "PENDING_APPROVAL" | "ACTIVE" | "REJECTED";
+  rejectionReason?: string | null;
   roles: string[];
   permissions: string[];
   scope: {

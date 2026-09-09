@@ -58,7 +58,7 @@ export function useAcquisitionCases(params: AcquisitionCasesParams = {}) {
   return useQuery({
     queryKey: ["acquisition", "cases", params],
     queryFn: () =>
-      api.get<AcquisitionCasesResponse>("/acquisition/cases", params),
+      api.get<AcquisitionCasesResponse>("/acquisitions/cases", params),
   });
 }
 
@@ -68,7 +68,7 @@ export function useAcquisitionCases(params: AcquisitionCasesParams = {}) {
 export function useAcquisitionCase(caseId: string | undefined) {
   return useQuery({
     queryKey: ["acquisition", "cases", caseId],
-    queryFn: () => api.get<AcquisitionCase>(`/acquisition/cases/${caseId}`),
+    queryFn: () => api.get<AcquisitionCase>(`/acquisitions/cases/${caseId}`),
     enabled: !!caseId,
   });
 }
@@ -81,7 +81,7 @@ export function useCreateAcquisitionCase() {
 
   return useMutation({
     mutationFn: (data: { projectId: string; parcelId: string }) =>
-      api.post<AcquisitionCase>("/acquisition/cases", data),
+      api.post<AcquisitionCase>("/acquisitions/cases", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["acquisition", "cases"] });
     },
@@ -96,7 +96,7 @@ export function useTransitionAcquisition(caseId: string) {
 
   return useMutation({
     mutationFn: (data: { toStatus: string; reason?: string }) =>
-      api.post(`/acquisition/cases/${caseId}/transition`, data),
+      api.post(`/acquisitions/cases/${caseId}/transition`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["acquisition", "cases", caseId],
@@ -114,7 +114,7 @@ export function useAssignAcquisitionCase(caseId: string) {
 
   return useMutation({
     mutationFn: (data: { userId: string }) =>
-      api.post(`/acquisition/cases/${caseId}/assign`, data),
+      api.post(`/acquisitions/cases/${caseId}/assign`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["acquisition", "cases", caseId],
@@ -131,7 +131,7 @@ export function useAcquisitionHistory(caseId: string | undefined) {
   return useQuery({
     queryKey: ["acquisition", "cases", caseId, "history"],
     queryFn: () =>
-      api.get<StatusTransition[]>(`/acquisition/cases/${caseId}/history`),
+      api.get<StatusTransition[]>(`/acquisitions/cases/${caseId}/history`),
     enabled: !!caseId,
   });
 }

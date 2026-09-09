@@ -57,7 +57,7 @@ interface UpdateBeneficiaryData {
 export function useBeneficiaries(params: BeneficiaryListParams = {}) {
   return useQuery({
     queryKey: ["beneficiaries", params],
-    queryFn: () => api.get<BeneficiaryListResponse>("/beneficiary", params),
+    queryFn: () => api.get<BeneficiaryListResponse>("/beneficiaries", params),
   });
 }
 
@@ -67,7 +67,7 @@ export function useBeneficiaries(params: BeneficiaryListParams = {}) {
 export function useBeneficiary(beneficiaryId: string | undefined) {
   return useQuery({
     queryKey: ["beneficiaries", beneficiaryId],
-    queryFn: () => api.get<Beneficiary>(`/beneficiary/${beneficiaryId}`),
+    queryFn: () => api.get<Beneficiary>(`/beneficiaries/${beneficiaryId}`),
     enabled: !!beneficiaryId,
   });
 }
@@ -80,7 +80,7 @@ export function useCreateBeneficiary() {
 
   return useMutation({
     mutationFn: (data: CreateBeneficiaryData) =>
-      api.post<Beneficiary>("/beneficiary", data),
+      api.post<Beneficiary>("/beneficiaries", data),
     onSuccess: (beneficiary) => {
       queryClient.invalidateQueries({ queryKey: ["beneficiaries"] });
       queryClient.setQueryData(["beneficiaries", beneficiary.id], beneficiary);
@@ -96,7 +96,7 @@ export function useUpdateBeneficiary(beneficiaryId: string) {
 
   return useMutation({
     mutationFn: (data: UpdateBeneficiaryData) =>
-      api.patch<Beneficiary>(`/beneficiary/${beneficiaryId}`, data),
+      api.patch<Beneficiary>(`/beneficiaries/${beneficiaryId}`, data),
     onSuccess: (beneficiary) => {
       queryClient.invalidateQueries({ queryKey: ["beneficiaries", beneficiaryId] });
       queryClient.invalidateQueries({ queryKey: ["beneficiaries"] });
@@ -113,7 +113,7 @@ export function useVerifyBeneficiary(beneficiaryId: string) {
 
   return useMutation({
     mutationFn: () =>
-      api.post<BeneficiaryVerification>(`/beneficiary/${beneficiaryId}/verify`),
+      api.post<BeneficiaryVerification>(`/beneficiaries/${beneficiaryId}/verify`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["beneficiaries", beneficiaryId] });
       queryClient.invalidateQueries({ queryKey: ["beneficiaries", beneficiaryId, "verification"] });
@@ -129,7 +129,7 @@ export function useBeneficiaryVerification(beneficiaryId: string | undefined) {
   return useQuery({
     queryKey: ["beneficiaries", beneficiaryId, "verification"],
     queryFn: () =>
-      api.get<BeneficiaryVerification>(`/beneficiary/${beneficiaryId}/verification`),
+      api.get<BeneficiaryVerification>(`/beneficiaries/${beneficiaryId}/verification`),
     enabled: !!beneficiaryId,
   });
 }
@@ -141,7 +141,7 @@ export function useBeneficiariesByStatus(verificationStatus: string | undefined)
   return useQuery({
     queryKey: ["beneficiaries", "status", verificationStatus],
     queryFn: () =>
-      api.get<BeneficiaryListResponse>("/beneficiary", { verificationStatus }),
+      api.get<BeneficiaryListResponse>("/beneficiaries", { verificationStatus }),
     enabled: !!verificationStatus,
   });
 }

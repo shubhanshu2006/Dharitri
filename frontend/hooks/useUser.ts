@@ -8,7 +8,7 @@ import type { User } from "@/types/api";
 export function useCurrentUser() {
   return useQuery({
     queryKey: ["user", "me"],
-    queryFn: () => api.get<User>("/me"),
+    queryFn: () => api.get<User>("/auth/me"),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
   });

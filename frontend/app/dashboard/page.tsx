@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { CanView } from "@/components/auth";
 import { Permission } from "@/lib/constants/permissions";
@@ -11,13 +13,21 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui";
 import Link from "next/link";
+import { useParcels } from "@/hooks/useParcels";
+import { useProjects } from "@/hooks/useProjects";
 
 export default function DashboardPage() {
+  const { data: projectsData } = useProjects({ limit: 3 });
+  const { data: parcelsData } = useParcels({ limit: 1 });
+  const projects = projectsData?.data ?? [];
+  const totalProjects = projectsData?.pagination.total ?? 0;
+  const totalParcels = parcelsData?.pagination.total ?? 0;
+
   const stats = [
     {
-      label: "Active Projects",
-      value: "12",
-      change: "+2 this month",
+      label: "Total Projects",
+      value: totalProjects.toLocaleString(),
+      change: "Projects in your workspace",
       icon: <FolderKanban className="w-6 h-6" />,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
@@ -25,8 +35,8 @@ export default function DashboardPage() {
     },
     {
       label: "Total Parcels",
-      value: "1,847",
-      change: "+124 this week",
+      value: totalParcels.toLocaleString(),
+      change: "Parcels across projects",
       icon: <MapPin className="w-6 h-6" />,
       color: "text-amber-600",
       bg: "bg-amber-50",
@@ -57,7 +67,7 @@ export default function DashboardPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-text font-[family-name:var(--font-instrument-sans)]">
+          <h1 className="text-3xl font-bold text-text font-instrument-sans">
             Dashboard
           </h1>
           <p className="text-muted mt-1">
@@ -109,22 +119,25 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
+                {projects.map((project) => (
                   <div
-                    key={i}
+                    key={project.id}
                     className="flex items-center justify-between p-3 rounded-lg hover:bg-paper-dim transition-colors"
                   >
                     <div>
                       <p className="font-medium text-text">
-                        NH-48 Highway Expansion
+                        {project.name}
                       </p>
-                      <p className="text-sm text-muted">Gujarat • 245 parcels</p>
+                      <p className="text-sm text-muted">{project.code}</p>
                     </div>
                     <span className="px-2.5 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
-                      In Progress
+                      {project.status.replace(/_/g, " ")}
                     </span>
                   </div>
                 ))}
+                {projects.length === 0 && (
+                  <p className="p-3 text-sm text-muted">No projects found.</p>
+                )}
               </div>
             </CardContent>
           </Card>

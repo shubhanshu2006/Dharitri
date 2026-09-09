@@ -59,6 +59,11 @@ export default function SignInPage() {
 
             <div className="flex w-full justify-center">
               <SignIn
+                routing="path"
+                path="/sign-in"
+                signUpUrl="/sign-up"
+                fallbackRedirectUrl="/dashboard"
+                signUpFallbackRedirectUrl="/dashboard"
                 appearance={{
                   variables: {
                     colorPrimary: "#086b4f",

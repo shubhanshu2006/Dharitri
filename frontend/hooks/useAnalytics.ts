@@ -10,6 +10,14 @@ import type {
   Bottleneck,
 } from "@/lib/constants/analytics";
 
+interface BottleneckApiResponse {
+  bottlenecks: Array<{
+    stage: string;
+    count: number;
+    severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  }>;
+}
+
 // API endpoints
 const analyticsApi = {
   getAcquisitionTrends: (params?: AnalyticsQuery) =>
@@ -23,7 +31,21 @@ const analyticsApi = {
   getPossessionTrends: (params?: AnalyticsQuery) =>
     api.get<PossessionTrends>("/analytics/possession", params as any),
   getBottlenecks: (params?: AnalyticsQuery) =>
-    api.get<Bottleneck[]>("/analytics/bottlenecks", params as any),
+    api
+      .get<BottleneckApiResponse>("/analytics/bottlenecks", params as any)
+      .then((response) =>
+        response.bottlenecks.map((bottleneck) => ({
+          stage: bottleneck.stage,
+          count: bottleneck.count,
+          averageDelay: 0,
+          impact:
+            bottleneck.severity === "CRITICAL"
+              ? "HIGH"
+              : bottleneck.severity,
+          description: `${bottleneck.stage} backlog requiring attention`,
+          recommendations: [],
+        })),
+      ),
 };
 
 // Query Keys
