@@ -14,8 +14,12 @@ class AnalyticsService {
     startDate.setMonth(startDate.getMonth() - months);
 
     const where: any = { createdAt: { gte: startDate } };
-    if (filters.stateId) where.project = { stateId: filters.stateId };
-    if (filters.districtId) where.project = { districtId: filters.districtId };
+    if (filters.stateId || filters.districtId) {
+      where.project = {
+        ...(filters.stateId ? { stateId: filters.stateId } : {}),
+        ...(filters.districtId ? { districtId: filters.districtId } : {}),
+      };
+    }
 
     const [totalCases, byStatus, byMonth] = await Promise.all([
       prisma.acquisitionCase.count({ where: { acquisitionParcel: where } }),
@@ -142,8 +146,16 @@ class AnalyticsService {
     startDate.setMonth(startDate.getMonth() - months);
 
     const where: any = { createdAt: { gte: startDate } };
-    if (filters.stateId) where.project = { stateId: filters.stateId };
-    if (filters.districtId) where.project = { districtId: filters.districtId };
+    if (filters.stateId || filters.districtId) {
+      where.acquisitionCase = {
+        acquisitionParcel: {
+          project: {
+            ...(filters.stateId ? { stateId: filters.stateId } : {}),
+            ...(filters.districtId ? { districtId: filters.districtId } : {}),
+          },
+        },
+      };
+    }
 
     const [total, completed, byStatus, byMonth] = await Promise.all([
       prisma.rRCase.count({ where: { ...where, applicable: true } }),
@@ -214,8 +226,20 @@ class AnalyticsService {
     logger.info("Analyzing bottlenecks", filters);
 
     const where: any = {};
-    if (filters.stateId) where.project = { stateId: filters.stateId };
-    if (filters.districtId) where.project = { districtId: filters.districtId };
+    if (filters.stateId || filters.districtId) {
+      where.project = {
+        ...(filters.stateId ? { stateId: filters.stateId } : {}),
+        ...(filters.districtId ? { districtId: filters.districtId } : {}),
+      };
+    }
+
+    const rrWhere: any = {
+      acquisitionCase: { acquisitionParcel: where },
+      applicable: true,
+      status: {
+        in: ["APPLICABILITY_REVIEW", "ASSESSMENT", "APPROVAL_PENDING"],
+      },
+    };
 
     const [
       verificationBacklog,
@@ -231,7 +255,7 @@ class AnalyticsService {
       prisma.compensationAssessment.count({
         where: {
           acquisitionCase: { acquisitionParcel: where },
-          awards: { none: {} },
+          award: null,
         },
       }),
       prisma.paymentTransaction.count({
@@ -241,13 +265,7 @@ class AnalyticsService {
         },
       }),
       prisma.rRCase.count({
-        where: {
-          ...where,
-          applicable: true,
-          status: {
-            in: ["APPLICABILITY_REVIEW", "ASSESSMENT", "APPROVAL_PENDING"],
-          },
-        },
+        where: rrWhere,
       }),
       prisma.possessionRecord.count({
         where: {
@@ -418,7 +436,7 @@ class AnalyticsService {
       where: {
         project: where,
         status: { not: "COMPLETED" },
-        deadline: { lt: new Date() },
+        dueDate: { lt: new Date() },
       },
     });
 
