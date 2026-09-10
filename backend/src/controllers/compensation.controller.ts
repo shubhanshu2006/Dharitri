@@ -11,6 +11,39 @@ import {
 import { successResponse } from "../utils/response.js";
 
 export class CompensationController {
+  /**
+   * Create assessment from parcel (automatically creates acquisition case)
+   */
+  async createAssessmentFromParcel(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { parcelId, projectId, ...compensationData } = req.body;
+      const userId = req.user?.id;
+
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      if (!parcelId || !projectId) {
+        return res.status(400).json({ error: "parcelId and projectId are required" });
+      }
+
+      const assessment = await compensationService.createAssessmentFromParcel(
+        parcelId,
+        projectId,
+        compensationData,
+        userId,
+      );
+      return successResponse(
+        res,
+        assessment,
+        "Compensation assessment created successfully",
+        201,
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async createAssessment(req: Request, res: Response, next: NextFunction) {
     try {
       const validatedData = createCompensationAssessmentSchema.parse(req.body);

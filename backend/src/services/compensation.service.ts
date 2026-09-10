@@ -1,5 +1,6 @@
 import { prisma } from "../database/client.js";
 import { logger } from "../utils/logger.js";
+import { AcquisitionStatus } from "../../generated/prisma/enums.js";
 
 interface CreateCompensationAssessmentInput {
   acquisitionCaseId: string;
@@ -29,6 +30,156 @@ interface CompensationQueryFilters {
 }
 
 class CompensationService {
+  /**
+   * Create assessment with automatic acquisition case/parcel creation
+   */
+  async createAssessmentFromParcel(
+    parcelId: string,
+    projectId: string,
+    compensationData: {
+      landValue: number;
+      solatium?: number;
+      interest?: number;
+      otherComponents?: number;
+      deductions?: number;
+    },
+    userId: string,
+  ) {
+    logger.info("Creating assessment from parcel", { parcelId, projectId, userId });
+
+    // Check if parcel exists
+    const parcel = await prisma.cadastralParcel.findUnique({
+      where: { id: parcelId },
+    });
+
+    if (!parcel) {
+      throw new Error("Cadastral parcel not found");
+    }
+
+    // Check if acquisition parcel already exists for this parcel and project
+    let acquisitionParcel = await prisma.acquisitionParcel.findFirst({
+      where: {
+        projectId,
+        cadastralParcelId: parcelId,
+      },
+      include: {
+        acquisitionCase: true,
+      },
+    });
+
+    let acquisitionCase;
+
+    // Create acquisition parcel if not exists
+    if (!acquisitionParcel) {
+      const acquisitionReference = `AP-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+      
+      acquisitionParcel = await prisma.acquisitionParcel.create({
+        data: {
+          projectId,
+          cadastralParcelId: parcelId,
+          acquisitionReference,
+          requiredAreaSqMeters: parcel.areaSqMeters,
+          status: AcquisitionStatus.DRAFT,
+        },
+        include: {
+          acquisitionCase: true,
+        },
+      });
+
+      logger.info("Created acquisition parcel", {
+        acquisitionParcelId: acquisitionParcel.id,
+      });
+    }
+
+    // Check if acquisition case exists
+    acquisitionCase = acquisitionParcel.acquisitionCase;
+
+    if (!acquisitionCase) {
+      // Create acquisition case
+      acquisitionCase = await prisma.acquisitionCase.create({
+        data: {
+          acquisitionParcelId: acquisitionParcel.id,
+          status: AcquisitionStatus.DRAFT,
+        },
+      });
+
+      logger.info("Created acquisition case", {
+        caseId: acquisitionCase.id,
+      });
+    }
+
+    // Now create the assessment
+    const assessment = await this.createAssessment(
+      {
+        acquisitionCaseId: acquisitionCase.id,
+        ...compensationData,
+      },
+      userId,
+    );
+
+    // Auto-approve assessment and create award for demo
+    const approvedAssessment = await prisma.compensationAssessment.update({
+      where: { id: assessment.id },
+      data: {
+        status: "APPROVED",
+        approvedById: userId,
+        approvedAt: new Date(),
+      },
+      include: {
+        acquisitionCase: {
+          include: {
+            acquisitionParcel: true,
+          },
+        },
+        assessedBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        approvedBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        ruleSet: true,
+      },
+    });
+
+    // Create award automatically
+    const awardNumber = `AWD-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+    const award = await prisma.compensationAward.create({
+      data: {
+        assessmentId: approvedAssessment.id,
+        awardNumber,
+        awardedAmount: approvedAssessment.totalAmount,
+        status: "APPROVED",
+        approvedById: userId,
+        approvedAt: new Date(),
+      },
+    });
+
+    // Keep the parcel pending until payment is confirmed.
+    await prisma.acquisitionParcel.update({
+      where: { id: acquisitionParcel.id },
+      data: { status: AcquisitionStatus.AWARD_STAGE },
+    });
+
+    logger.info("Assessment created, approved, and award created", {
+      assessmentId: approvedAssessment.id,
+      awardId: award.id,
+      acquisitionParcelId: acquisitionParcel.id,
+    });
+
+    return {
+      ...approvedAssessment,
+      award,
+    };
+  }
+
   async createAssessment(
     data: CreateCompensationAssessmentInput,
     userId: string,

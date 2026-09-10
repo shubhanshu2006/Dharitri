@@ -6,6 +6,12 @@ import { Permission } from "../constants/permissions.js";
 const router = Router();
 
 router.post(
+  "/assessments/from-parcel",
+  requirePermission(Permission.COMPENSATION_CREATE),
+  compensationController.createAssessmentFromParcel.bind(compensationController),
+);
+
+router.post(
   "/assessments",
   requirePermission(Permission.COMPENSATION_CREATE),
   compensationController.createAssessment.bind(compensationController),
