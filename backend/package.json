@@ -17,7 +17,8 @@
     "db:seed:locations": "tsx src/database/seeds/location-only.ts",
     "db:seed:rbac": "tsx src/database/seeds/rbac-only.ts",
     "db:seed:compensation": "tsx src/database/seeds/compensation-ruleset-only.ts",
-    "db:seed:superadmin": "tsx src/database/seeds/super-admin.seed.ts"
+    "db:seed:superadmin": "tsx src/database/seeds/super-admin.seed.ts",
+    "db:seed:demo-parcels": "tsx src/database/seeds/demo-parcels.seed.ts"
   },
   "keywords": [],
   "author": "Shubhanshu Singh",
