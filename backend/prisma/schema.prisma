@@ -457,6 +457,14 @@ model Project {
   stateId              String        @db.Uuid
   districtId           String?       @db.Uuid
   createdById          String        @db.Uuid
+  
+  // Alignment reference coordinates (optional)
+  alignmentStartLat    Decimal?      @db.Decimal(10, 8)
+  alignmentStartLng    Decimal?      @db.Decimal(11, 8)
+  alignmentEndLat      Decimal?      @db.Decimal(10, 8)
+  alignmentEndLng      Decimal?      @db.Decimal(11, 8)
+  corridorWidthMeters  Int?
+  
   createdAt            DateTime      @default(now()) @db.Timestamptz(6)
   updatedAt            DateTime      @updatedAt @db.Timestamptz(6)
 
