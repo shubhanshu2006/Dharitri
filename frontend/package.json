@@ -11,7 +11,9 @@
   "dependencies": {
     "@clerk/nextjs": "^7.9.1",
     "@hookform/resolvers": "^3.9.1",
+    "@mapbox/mapbox-gl-draw": "^1.5.1",
     "@tanstack/react-query": "^5.102.8",
+    "@types/mapbox__mapbox-gl-draw": "^1.4.9",
     "clsx": "^2.1.1",
     "framer-motion": "^13.2.0",
     "lucide-react": "^1.41.0",

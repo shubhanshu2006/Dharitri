@@ -13,15 +13,21 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui";
 import Link from "next/link";
-import { useParcels } from "@/hooks/useParcels";
 import { useProjects } from "@/hooks/useProjects";
+import { useNationalDashboard } from "@/hooks/useDashboard";
 
 export default function DashboardPage() {
+  const { data: metrics } = useNationalDashboard();
   const { data: projectsData } = useProjects({ limit: 3 });
-  const { data: parcelsData } = useParcels({ limit: 1 });
   const projects = projectsData?.data ?? [];
-  const totalProjects = projectsData?.pagination.total ?? 0;
-  const totalParcels = parcelsData?.pagination.total ?? 0;
+  const totalProjects = metrics?.projects.total ?? 0;
+  const totalParcels = metrics?.parcels.total ?? 0;
+  const verifiedCases = metrics?.verification?.verified ?? 0;
+  const creditedAmount = metrics?.payments.creditedAmount ?? 0;
+  const verifiedPercentage = totalParcels
+    ? Math.round((verifiedCases / totalParcels) * 100)
+    : 0;
+  const creditedInCrores = creditedAmount / 10_000_000;
 
   const stats = [
     {
@@ -44,8 +50,8 @@ export default function DashboardPage() {
     },
     {
       label: "Compensation Paid",
-      value: "₹45.2 Cr",
-      change: "+₹8.4 Cr this month",
+      value: `₹${creditedInCrores.toFixed(1)} Cr`,
+      change: "Total credited payments",
       icon: <DollarSign className="w-6 h-6" />,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
@@ -53,8 +59,8 @@ export default function DashboardPage() {
     },
     {
       label: "Verified Cases",
-      value: "892",
-      change: "96% completion",
+      value: verifiedCases.toLocaleString(),
+      change: `${verifiedPercentage}% of total parcels`,
       icon: <CheckCircle className="w-6 h-6" />,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
