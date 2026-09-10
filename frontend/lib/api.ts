@@ -29,6 +29,14 @@ interface RequestOptions extends RequestInit {
   auth?: boolean;
 }
 
+type AuthTokenGetter = () => Promise<string | null>;
+
+let authTokenGetter: AuthTokenGetter | undefined;
+
+export function setAuthTokenGetter(getter: AuthTokenGetter) {
+  authTokenGetter = getter;
+}
+
 /**
  * Build URL with query parameters
  */
@@ -63,8 +71,12 @@ async function fetchApi<T = any>(
     ...headers,
   };
 
-  // Add Clerk auth token if needed (will be handled by Clerk middleware in Next.js)
-  // The auth token is automatically included in server components and API routes
+  if (auth && authTokenGetter) {
+    const token = await authTokenGetter();
+    if (token) {
+      (requestHeaders as Record<string, string>).Authorization = `Bearer ${token}`;
+    }
+  }
 
   try {
     const response = await fetch(url, {

@@ -1,9 +1,14 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useAuth } from "@clerk/nextjs";
 import { useState, type ReactNode } from "react";
+import { setAuthTokenGetter } from "@/lib/api";
 
 export function QueryProvider({ children }: { children: ReactNode }) {
+  const { getToken } = useAuth();
+  setAuthTokenGetter(getToken);
+
   const [queryClient] = useState(
     () =>
       new QueryClient({

@@ -24,7 +24,9 @@ export function formatDate(date: string | Date, options?: Intl.DateTimeFormatOpt
  * Format date and time
  */
 export function formatDateTime(date: string | Date): string {
+  if (!date) return "N/A";
   const dateObj = typeof date === "string" ? new Date(date) : date;
+  if (isNaN(dateObj.getTime())) return "Invalid Date";
   return dateObj.toLocaleString("en-IN", {
     year: "numeric",
     month: "short",

@@ -14,6 +14,9 @@ export interface NationalMetrics {
   parcels: {
     total: number;
   };
+  verification?: {
+    verified: number;
+  };
   compensation: {
     totalAssessments: number;
     totalAssessed: number;

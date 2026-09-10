@@ -66,6 +66,7 @@ export interface Project {
   id: string;
   name: string;
   code: string;
+  projectCode?: string;
   description?: string;
   type: string;
   ministry?: string;
