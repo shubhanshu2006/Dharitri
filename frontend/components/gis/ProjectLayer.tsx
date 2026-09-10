@@ -75,14 +75,32 @@ export function ProjectLayer({
               "match",
               ["get", "acquisitionStatus"],
               "ACQUIRED",
-              "#10b981",
+              "#10b981", // Green - Fully paid
+              "ACQUISITION_COMPLETED",
+              "#10b981", // Green - Acquisition completed
+              "VERIFIED",
+              "#fbbf24", // Yellow - Verified, pending acquisition
+              "ACQUISITION_INITIATED",
+              "#f59e0b", // Amber - Acquisition initiated
+              "NOTIFICATION_STAGE",
+              "#f59e0b", // Amber - Notification stage
+              "AWARD_STAGE",
+              "#f97316", // Orange - Award stage
+              "PAYMENT_COMPLETED",
+              "#10b981", // Green - Payment done
+              "PAYMENT_IN_PROGRESS",
+              "#22c55e", // Light green - Payment processing
+              "COMPENSATION_APPROVED",
+              "#f97316", // Orange - Approved, pending payment
+              "COMPENSATION_ASSESSED",
+              "#fbbf24", // Yellow - Assessed, pending approval
               "IN_ACQUISITION",
-              "#f59e0b",
+              "#f59e0b", // Amber - In acquisition
               "IDENTIFIED",
-              "#06b6d4",
+              "#94a3b8", // Gray - Just identified
               "DISPUTED",
-              "#ef4444",
-              "#94a3b8",
+              "#ef4444", // Red - Disputed
+              "#94a3b8", // Default gray
             ],
             "fill-opacity": 0.6,
           },
@@ -101,13 +119,18 @@ export function ProjectLayer({
       map.on("mousemove", "parcels-fill", (event) => {
         if (!event.features?.length) return;
         map.getCanvas().style.cursor = "pointer";
-        if (hoveredParcelId) {
+        const feature = event.features[0];
+        const currentId = feature.properties?.id || feature.id;
+        
+        if (!currentId) return; // Skip if no ID
+        
+        if (hoveredParcelId && hoveredParcelId !== currentId) {
           map.setFeatureState(
             { source: "parcels", id: hoveredParcelId },
             { hover: false },
           );
         }
-        hoveredParcelId = event.features[0].id as string;
+        hoveredParcelId = currentId as string;
         map.setFeatureState(
           { source: "parcels", id: hoveredParcelId },
           { hover: true },

@@ -8,10 +8,23 @@ import type { GeoJSONFeatureCollection } from "@/types/api";
 export function useProjectBoundary(projectId: string | undefined) {
   return useQuery({
     queryKey: ["gis", "projects", projectId, "boundary"],
-    queryFn: () =>
-      api.get<GeoJSONFeatureCollection>(
-        `/gis/projects/${projectId}/boundary`
-      ),
+    queryFn: async () => {
+      const boundary = await api.get<{
+        geometry: GeoJSONFeatureCollection["features"][number]["geometry"];
+        sourceType?: string;
+      }>(`/gis/projects/${projectId}/boundary`);
+
+      return {
+        type: "FeatureCollection" as const,
+        features: [
+          {
+            type: "Feature" as const,
+            properties: { sourceType: boundary.sourceType },
+            geometry: boundary.geometry,
+          },
+        ],
+      } as GeoJSONFeatureCollection;
+    },
     enabled: !!projectId,
   });
 }
@@ -23,11 +36,46 @@ export function useUploadProjectBoundary(projectId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (geojson: GeoJSONFeatureCollection) =>
-      api.post(`/projects/${projectId}/boundary`, geojson),
+    mutationFn: (payload: {
+      geometry: GeoJSONFeatureCollection["features"][number]["geometry"];
+      sourceType: string;
+    }) => api.post(`/gis/projects/${projectId}/boundary`, payload),
     onSuccess: () => {
+      queryClient.removeQueries({
+        queryKey: ["gis", "projects", projectId, "boundary"],
+      });
       queryClient.invalidateQueries({
         queryKey: ["gis", "projects", projectId, "boundary"],
+      });
+    },
+  });
+}
+
+export function useDeleteProjectBoundary(projectId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => api.delete(`/gis/projects/${projectId}/boundary`),
+    onSuccess: () => {
+      queryClient.setQueryData(
+        ["gis", "projects", projectId, "boundary"],
+        null,
+      );
+      queryClient.setQueryData<GeoJSONFeatureCollection>(
+        ["gis", "projects", projectId, "parcels"],
+        { type: "FeatureCollection", features: [] },
+      );
+      queryClient.removeQueries({
+        queryKey: ["gis", "projects", projectId, "boundary"],
+      });
+      queryClient.removeQueries({
+        queryKey: ["gis", "projects", projectId, "parcels"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["gis", "projects", projectId, "boundary"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["gis", "projects", projectId, "parcels"],
       });
     },
   });

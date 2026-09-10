@@ -1,4 +1,4 @@
-import { forwardRef, type HTMLAttributes } from "react";
+import { createElement, forwardRef, type HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 import {
   AlertCircle,
@@ -35,7 +35,7 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(
     },
     ref
   ) => {
-    const Icon = icon || icons[variant];
+    const DefaultIcon = icons[variant];
 
     const variants = {
       success: "bg-emerald-50 border-emerald-200 text-emerald-800",
@@ -62,18 +62,16 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(
         )}
         {...props}
       >
-        {Icon && (
-          <div className={cn("flex-shrink-0 mt-0.5", iconColors[variant])}>
-            {typeof Icon === "function" ? <Icon className="w-5 h-5" /> : Icon}
-          </div>
-        )}
+        <div className={cn("shrink-0 mt-0.5", iconColors[variant])}>
+          {icon || createElement(DefaultIcon, { className: "w-5 h-5" })}
+        </div>
         <div className="flex-1 text-sm leading-relaxed">{children}</div>
         {dismissible && onDismiss && (
           <button
             type="button"
             onClick={onDismiss}
             className={cn(
-              "flex-shrink-0 rounded-md p-1 hover:bg-black/5 transition-colors",
+              "shrink-0 rounded-md p-1 hover:bg-black/5 transition-colors",
               iconColors[variant]
             )}
             aria-label="Dismiss"

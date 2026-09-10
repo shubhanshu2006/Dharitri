@@ -6,11 +6,12 @@ interface LegendItem {
 }
 
 const PARCEL_LEGEND: LegendItem[] = [
-  { label: "Acquired", color: "#10b981" },
-  { label: "In Acquisition", color: "#f59e0b" },
-  { label: "Identified", color: "#06b6d4" },
+  { label: "Acquisition completed", color: "#10b981" },
+  { label: "Verified", color: "#fbbf24" },
+  { label: "Acquisition in progress", color: "#f59e0b" },
+  { label: "Award stage", color: "#f97316" },
+  { label: "Identified / Draft", color: "#94a3b8" },
   { label: "Disputed", color: "#ef4444" },
-  { label: "Other", color: "#94a3b8" },
 ];
 
 export function MapLegend() {
