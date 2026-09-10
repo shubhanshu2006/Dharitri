@@ -10,6 +10,12 @@ export const createProjectSchema = z.object({
   ministryId: z.string().uuid().optional(),
   stateId: z.string().uuid(),
   districtId: z.string().uuid().optional(),
+  // Alignment coordinates (optional)
+  alignmentStartLat: z.number().min(-90).max(90).optional(),
+  alignmentStartLng: z.number().min(-180).max(180).optional(),
+  alignmentEndLat: z.number().min(-90).max(90).optional(),
+  alignmentEndLng: z.number().min(-180).max(180).optional(),
+  corridorWidthMeters: z.number().int().positive().optional(),
 });
 
 export const updateProjectSchema = z.object({

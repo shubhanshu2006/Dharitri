@@ -11,6 +11,15 @@ import {
 import { successResponse } from "../utils/response.js";
 
 export class ProjectController {
+  async getNextProjectCode(req: Request, res: Response, next: NextFunction) {
+    try {
+      const nextCode = await projectService.getNextProjectCode();
+      return successResponse(res, nextCode, "Next project code generated successfully");
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async createProject(req: Request, res: Response, next: NextFunction) {
     try {
       const validatedData = createProjectSchema.parse(req.body);

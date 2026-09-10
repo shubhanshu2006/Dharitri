@@ -1,9 +1,17 @@
 import { Router } from "express";
 import projectController from "../controllers/project.controller.js";
 import { requirePermission } from "../middlewares/authorization.middleware.js";
+import { requireAuth } from "../middlewares/auth.middleware.js";
 import { Permission } from "../constants/permissions.js";
 
 const router = Router();
+
+// Get next available project code (requires auth but no specific permission)
+router.get(
+  "/next-code",
+  requireAuth,
+  projectController.getNextProjectCode,
+);
 
 router.post(
   "/",

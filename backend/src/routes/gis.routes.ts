@@ -11,6 +11,12 @@ router.post(
   gisController.setProjectBoundary,
 );
 
+router.post(
+  "/projects/:id/boundary/from-coordinates",
+  requirePermission(Permission.PROJECT_UPDATE),
+  gisController.generateBoundaryFromCoordinates,
+);
+
 router.get(
   "/projects/:id/boundary",
   requirePermission(Permission.PROJECT_VIEW),
@@ -27,6 +33,18 @@ router.get(
   "/projects/:id/parcels",
   requirePermission(Permission.PROJECT_VIEW),
   gisController.getIntersectingParcels,
+);
+
+router.get(
+  "/parcels/:id",
+  requirePermission(Permission.PARCEL_VIEW),
+  gisController.getParcelDetails,
+);
+
+router.patch(
+  "/parcels/:id/status",
+  requirePermission(Permission.PARCEL_UPDATE),
+  gisController.updateParcelStatus,
 );
 
 router.get(

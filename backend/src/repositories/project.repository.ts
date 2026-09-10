@@ -65,6 +65,17 @@ export class ProjectRepository {
     });
   }
 
+  async findLast() {
+    return prisma.project.findFirst({
+      select: {
+        projectCode: true,
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+  }
+
   async findMany(params: ProjectQueryParams) {
     const {
       status,

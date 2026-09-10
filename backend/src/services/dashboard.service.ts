@@ -9,6 +9,7 @@ class DashboardService {
       totalProjects,
       completedProjects,
       totalParcels,
+      verifiedParcels,
       landProposed,
       landAcquired,
       compensationStats,
@@ -18,7 +19,8 @@ class DashboardService {
     ] = await Promise.all([
       prisma.project.count(),
       prisma.project.count({ where: { status: "COMPLETED" } }),
-      prisma.acquisitionParcel.count(),
+      prisma.cadastralParcel.count(),
+      prisma.acquisitionParcel.count({ where: { status: "VERIFIED" } }),
       prisma.acquisitionParcel.aggregate({
         _sum: { requiredAreaSqMeters: true },
       }),
@@ -53,6 +55,9 @@ class DashboardService {
       },
       parcels: {
         total: totalParcels,
+      },
+      verification: {
+        verified: verifiedParcels,
       },
       compensation: compensationStats,
       payments: paymentStats,

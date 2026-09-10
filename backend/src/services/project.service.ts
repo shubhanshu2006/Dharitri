@@ -16,9 +16,41 @@ import {
 import { logger } from "../utils/logger.js";
 
 export class ProjectService {
+  async getNextProjectCode() {
+    const currentYear = new Date().getFullYear();
+    
+    // Get the last project created
+    const lastProject = await projectRepository.findLast();
+    
+    let suggestedCode = `PRJ-${currentYear}-001`;
+    
+    if (lastProject?.projectCode) {
+      // Extract year and number from last code (format: PRJ-YYYY-NNN)
+      const match = lastProject.projectCode.match(/PRJ-(\d{4})-(\d+)/);
+      
+      if (match) {
+        const lastYear = parseInt(match[1]);
+        const lastNum = parseInt(match[2]);
+        
+        // If same year, increment the number
+        if (lastYear === currentYear) {
+          const nextNum = (lastNum + 1).toString().padStart(3, '0');
+          suggestedCode = `PRJ-${currentYear}-${nextNum}`;
+        }
+        // If different year, start from 001
+      }
+    }
+    
+    return {
+      lastCode: lastProject?.projectCode || null,
+      suggestedCode,
+      year: currentYear
+    };
+  }
+
   private readonly validTransitions: Record<ProjectStatus, ProjectStatus[]> = {
     DRAFT: [ProjectStatus.SUBMITTED, ProjectStatus.CANCELLED],
-    SUBMITTED: [ProjectStatus.UNDER_REVIEW, ProjectStatus.DRAFT],
+    SUBMITTED: [ProjectStatus.UNDER_REVIEW, ProjectStatus.APPROVED, ProjectStatus.DRAFT],
     UNDER_REVIEW: [
       ProjectStatus.APPROVED,
       ProjectStatus.ON_HOLD,
