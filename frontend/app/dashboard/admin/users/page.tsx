@@ -17,6 +17,9 @@ import { useAdminUsers } from "@/hooks/useAdminUsers";
 import { useStates, useDistricts } from "@/hooks/useLocations";
 import { Role, ROLE_DESCRIPTIONS, ROLE_COLORS } from "@/lib/constants/roles";
 
+import { ConfirmModal } from "@/components/ui";
+import { toast } from "sonner";
+
 interface ApprovalFormData {
   roleCode: string;
   stateId: string;
@@ -43,6 +46,7 @@ export default function AdminUsersPage() {
     departmentId: "",
   });
   const [rejectReason, setRejectReason] = useState("");
+  const [userToReject, setUserToReject] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Filter out CITIZEN role from assignment options (public role)
@@ -52,7 +56,7 @@ export default function AdminUsersPage() {
 
   const handleApprove = async (userId: string) => {
     if (!approvalData.roleCode) {
-      alert("Please select a role");
+      toast.warning("Please select a role before approving");
       return;
     }
 
@@ -66,29 +70,28 @@ export default function AdminUsersPage() {
         districtId: "",
         departmentId: "",
       });
-      alert("User approved successfully!");
+      toast.success("User approved and role assigned successfully!");
     } catch (error) {
       console.error("Failed to approve user:", error);
-      alert("Failed to approve user. Please try again.");
+      toast.error("Failed to approve user. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleReject = async (userId: string) => {
-    if (!confirm("Are you sure you want to reject this user?")) {
-      return;
-    }
+  const confirmReject = async () => {
+    if (!userToReject) return;
 
     setIsSubmitting(true);
     try {
-      await rejectUser(userId, rejectReason);
+      await rejectUser(userToReject, rejectReason);
       setSelectedUser(null);
       setRejectReason("");
-      alert("User rejected successfully");
+      setUserToReject(null);
+      toast.success("User rejected successfully");
     } catch (error) {
       console.error("Failed to reject user:", error);
-      alert("Failed to reject user. Please try again.");
+      toast.error("Failed to reject user. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -152,12 +155,12 @@ export default function AdminUsersPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Users</p>
-              <p className="text-3xl font-bold text-blue-600 mt-1">
+              <p className="text-3xl font-bold text-emerald-600 mt-1">
                 {allUsers?.length || 0}
               </p>
             </div>
-            <div className="bg-blue-100 p-3 rounded-lg">
-              <Users className="w-8 h-8 text-blue-600" />
+            <div className="bg-emerald-100 p-3 rounded-lg">
+              <Users className="w-8 h-8 text-emerald-600" />
             </div>
           </div>
         </div>
@@ -210,7 +213,7 @@ export default function AdminUsersPage() {
                       )}
                       {user.requestedStateId && (
                         <div className="flex items-center gap-2 text-sm">
-                          <MapPin className="w-4 h-4 text-blue-500" />
+                          <MapPin className="w-4 h-4 text-emerald-600" />
                           <span className="text-gray-600">State:</span>
                           <span className="font-medium text-gray-900">
                             {states?.find(s => s.id === user.requestedStateId)?.name || user.requestedStateId}
@@ -219,7 +222,7 @@ export default function AdminUsersPage() {
                       )}
                       {user.requestedDistrictId && (
                         <div className="flex items-center gap-2 text-sm">
-                          <MapPin className="w-4 h-4 text-blue-500" />
+                          <MapPin className="w-4 h-4 text-emerald-600" />
                           <span className="text-gray-600">District:</span>
                           <span className="font-medium text-gray-900">
                             {allDistricts?.find(d => d.id === user.requestedDistrictId)?.name || user.requestedDistrictId}
@@ -247,8 +250,8 @@ export default function AdminUsersPage() {
                     </div>
 
                     {user.requestReason && (
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                        <p className="text-sm text-blue-900">
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mb-4">
+                        <p className="text-sm text-emerald-900">
                           <strong>Reason:</strong> "{user.requestReason}"
                         </p>
                       </div>
@@ -386,7 +389,7 @@ export default function AdminUsersPage() {
                               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
                             />
                             <button
-                              onClick={() => handleReject(user.id)}
+                              onClick={() => setUserToReject(user.id)}
                               disabled={isSubmitting}
                               className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2"
                             >
@@ -438,6 +441,18 @@ export default function AdminUsersPage() {
           </p>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={Boolean(userToReject)}
+        onClose={() => setUserToReject(null)}
+        onConfirm={confirmReject}
+        title="Reject User Application"
+        description="Are you sure you want to reject this user's registration request? This action will cancel their account onboarding."
+        confirmText="Reject Application"
+        cancelText="Cancel"
+        variant="danger"
+        isLoading={isSubmitting}
+      />
     </div>
   );
 }

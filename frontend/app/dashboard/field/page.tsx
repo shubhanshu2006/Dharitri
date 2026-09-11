@@ -132,7 +132,7 @@ export default function FieldVisitsPage() {
         <div className="grid grid-cols-3 gap-3">
           <Card>
             <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-blue-600">
+              <p className="text-3xl font-bold text-emerald-600">
                 {inProgressVisits.length}
               </p>
               <p className="text-xs text-gray-600 mt-1">Active</p>
@@ -254,13 +254,13 @@ export default function FieldVisitsPage() {
                           <div
                             className={cn(
                               "w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-2",
-                              photoCount > 0 ? "bg-blue-100" : "bg-gray-100"
+                              photoCount > 0 ? "bg-emerald-100" : "bg-gray-100"
                             )}
                           >
                             <Camera
                               className={cn(
                                 "h-6 w-6",
-                                photoCount > 0 ? "text-blue-600" : "text-gray-400"
+                                photoCount > 0 ? "text-emerald-600" : "text-gray-400"
                               )}
                             />
                           </div>

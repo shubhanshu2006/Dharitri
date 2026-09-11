@@ -305,12 +305,12 @@ export default function DistrictDashboardPage({
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-amber-50 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <Users className="h-8 w-8 text-blue-600" />
+                    <Users className="h-8 w-8 text-amber-600" />
                     <div>
                       <p className="text-sm text-gray-600">Total Cases</p>
-                      <p className="text-2xl font-bold text-blue-700">
+                      <p className="text-2xl font-bold text-amber-700">
                         {formatNumber(metrics.rr.totalCases)}
                       </p>
                     </div>
@@ -344,18 +344,18 @@ export default function DistrictDashboardPage({
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-xl font-['Instrument_Sans']">
+              <CardTitle className="text-xl">
                 Possession Status
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-emerald-50 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <Home className="h-8 w-8 text-purple-600" />
+                    <Home className="h-8 w-8 text-emerald-600" />
                     <div>
                       <p className="text-sm text-gray-600">Total Records</p>
-                      <p className="text-2xl font-bold text-purple-700">
+                      <p className="text-2xl font-bold text-emerald-700">
                         {formatNumber(metrics.possession.totalRecords)}
                       </p>
                     </div>
@@ -428,13 +428,13 @@ export default function DistrictDashboardPage({
               )}
 
               {metrics.rr.inProgress > 0 && (
-                <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                  <Users className="h-5 w-5 text-blue-600 mt-0.5" />
+                <div className="flex items-start gap-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                  <Users className="h-5 w-5 text-amber-600 mt-0.5" />
                   <div>
-                    <p className="font-medium text-blue-900">
+                    <p className="font-medium text-amber-900">
                       {metrics.rr.inProgress} R&R cases under assessment
                     </p>
-                    <p className="text-sm text-blue-700">
+                    <p className="text-sm text-amber-700">
                       Monitor rehabilitation progress and beneficiary satisfaction
                     </p>
                   </div>

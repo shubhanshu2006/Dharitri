@@ -6,6 +6,7 @@ import {
   ScreenReaderAnnouncer,
   SkipToContent,
 } from "@/components/accessibility";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const instrumentSerif = Instrument_Serif({
@@ -36,12 +37,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <ClerkProvider>
       <html
         lang="en"
-        className={`${instrumentSerif.variable} ${instrumentSans.variable} ${inter.variable} h-full antialiased`}
+        className={`${inter.variable} ${instrumentSans.variable} ${instrumentSerif.variable} h-full antialiased font-sans`}
       >
-        <body className="min-h-full flex flex-col bg-paper text-text">
+        <body className="min-h-full flex flex-col bg-paper text-text font-sans selection:bg-emerald-200 selection:text-ink">
           <SkipToContent />
           <ScreenReaderAnnouncer />
           <QueryProvider>{children}</QueryProvider>
+          <Toaster
+            richColors
+            position="top-right"
+            closeButton
+            toastOptions={{
+              className: "font-sans text-sm rounded-xl shadow-lg border border-paper-line",
+            }}
+          />
         </body>
       </html>
     </ClerkProvider>

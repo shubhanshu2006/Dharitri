@@ -21,7 +21,9 @@ import {
   Loading,
   ErrorMessage,
   Alert,
+  ConfirmModal,
 } from "@/components/ui";
+import { toast } from "sonner";
 import { ArrowLeft, Play, CheckCircle2, AlertTriangle, X } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
 
@@ -39,29 +41,32 @@ export default function VerificationCaseDetailPage({
 
   const [showCorrectionDialog, setShowCorrectionDialog] = useState(false);
   const [correctionReason, setCorrectionReason] = useState("");
+  const [showApproveModal, setShowApproveModal] = useState(false);
 
   const handleRunVerification = async () => {
     try {
       await runVerification.mutateAsync();
+      toast.success("Verification process initiated successfully");
     } catch (error) {
       console.error("Failed to run verification:", error);
+      toast.error("Failed to initiate verification run");
     }
   };
 
   const handleApprove = async () => {
-    if (!confirm("Are you sure you want to approve this verification case?"))
-      return;
-
     try {
       await approveVerification.mutateAsync();
+      setShowApproveModal(false);
+      toast.success("Verification case approved successfully");
     } catch (error) {
       console.error("Failed to approve verification:", error);
+      toast.error("Failed to approve verification case");
     }
   };
 
   const handleRequestCorrection = async () => {
     if (!correctionReason.trim()) {
-      alert("Please provide a reason for requesting correction");
+      toast.warning("Please provide a valid reason for requesting correction");
       return;
     }
 
@@ -69,8 +74,10 @@ export default function VerificationCaseDetailPage({
       await requestCorrection.mutateAsync({ reason: correctionReason });
       setShowCorrectionDialog(false);
       setCorrectionReason("");
+      toast.success("Correction request submitted successfully");
     } catch (error) {
       console.error("Failed to request correction:", error);
+      toast.error("Failed to submit correction request");
     }
   };
 
@@ -127,7 +134,7 @@ export default function VerificationCaseDetailPage({
         <div className="flex items-start justify-between mt-4">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl font-bold text-text font-[family-name:var(--font-instrument-sans)]">
+              <h1 className="text-3xl font-bold text-text">
                 Verification Case
               </h1>
               <VerificationStatusBadge status={verificationCase.status} />
@@ -156,7 +163,7 @@ export default function VerificationCaseDetailPage({
                   variant="primary"
                   size="sm"
                   icon={<CheckCircle2 className="w-4 h-4" />}
-                  onClick={handleApprove}
+                  onClick={() => setShowApproveModal(true)}
                   disabled={approveVerification.isPending}
                 >
                   {approveVerification.isPending ? "Approving..." : "Approve"}
@@ -405,6 +412,18 @@ export default function VerificationCaseDetailPage({
           </Card>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={showApproveModal}
+        onClose={() => setShowApproveModal(false)}
+        onConfirm={handleApprove}
+        title="Approve Verification Case"
+        description="Are you sure you want to approve this verification case? This confirms all legal and cadastral checks satisfy statutory criteria."
+        confirmText="Approve Case"
+        cancelText="Cancel"
+        variant="emerald"
+        isLoading={approveVerification.isPending}
+      />
     </div>
   );
 }

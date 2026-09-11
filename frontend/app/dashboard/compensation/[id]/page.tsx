@@ -2,6 +2,7 @@
 
 import { use, useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import {
   useCompensationAssessment,
   useSubmitCompensationAssessment,
@@ -22,6 +23,7 @@ import {
   Loading,
   ErrorMessage,
   Alert,
+  ConfirmModal,
 } from "@/components/ui";
 import {
   ArrowLeft,
@@ -47,35 +49,36 @@ export default function CompensationDetailPage({
   const correctionMutation = useRequestCompensationCorrection(id);
 
   const [showCorrectionDialog, setShowCorrectionDialog] = useState(false);
+  const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
+  const [showApproveConfirm, setShowApproveConfirm] = useState(false);
 
-  const handleSubmit = async () => {
-    if (!confirm("Are you sure you want to submit this assessment for review?"))
-      return;
-
+  const handleConfirmSubmit = async () => {
     try {
       await submitMutation.mutateAsync();
-    } catch (error) {
-      console.error("Failed to submit assessment:", error);
+      toast.success("Compensation assessment submitted for statutory review");
+      setShowSubmitConfirm(false);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to submit assessment");
     }
   };
 
-  const handleApprove = async () => {
-    if (!confirm("Are you sure you want to approve this compensation assessment?"))
-      return;
-
+  const handleConfirmApprove = async () => {
     try {
       await approveMutation.mutateAsync();
-    } catch (error) {
-      console.error("Failed to approve assessment:", error);
+      toast.success("Compensation assessment successfully approved");
+      setShowApproveConfirm(false);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to approve assessment");
     }
   };
 
   const handleRequestCorrection = async (reason: string) => {
     try {
       await correctionMutation.mutateAsync({ reason });
+      toast.success("Correction request dispatched to assessing officer");
       setShowCorrectionDialog(false);
-    } catch (error) {
-      console.error("Failed to request correction:", error);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to request correction");
     }
   };
 
@@ -144,7 +147,7 @@ export default function CompensationDetailPage({
                   variant="primary"
                   size="sm"
                   icon={<Send className="w-4 h-4" />}
-                  onClick={handleSubmit}
+                  onClick={() => setShowSubmitConfirm(true)}
                   disabled={submitMutation.isPending}
                 >
                   {submitMutation.isPending ? "Submitting..." : "Submit"}
@@ -158,7 +161,7 @@ export default function CompensationDetailPage({
                   variant="primary"
                   size="sm"
                   icon={<CheckCircle2 className="w-4 h-4" />}
-                  onClick={handleApprove}
+                  onClick={() => setShowApproveConfirm(true)}
                   disabled={approveMutation.isPending}
                 >
                   {approveMutation.isPending ? "Approving..." : "Approve"}
@@ -430,6 +433,30 @@ export default function CompensationDetailPage({
           isSubmitting={correctionMutation.isPending}
         />
       )}
+
+      {/* Submit Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showSubmitConfirm}
+        onClose={() => setShowSubmitConfirm(false)}
+        onConfirm={handleConfirmSubmit}
+        title="Submit Assessment for Review"
+        description="Are you sure you want to submit this compensation assessment for statutory supervisory review? Once submitted, values cannot be altered without a formal correction request."
+        variant="emerald"
+        confirmText="Submit for Review"
+        isLoading={submitMutation.isPending}
+      />
+
+      {/* Approve Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showApproveConfirm}
+        onClose={() => setShowApproveConfirm(false)}
+        onConfirm={handleConfirmApprove}
+        title="Approve Statutory Assessment"
+        description="Are you sure you want to formally approve this compensation award? This will finalize the valuation and unlock treasury disbursement authorization."
+        variant="emerald"
+        confirmText="Approve Award"
+        isLoading={approveMutation.isPending}
+      />
     </div>
   );
 }

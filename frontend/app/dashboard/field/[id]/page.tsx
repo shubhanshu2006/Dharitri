@@ -285,10 +285,10 @@ export default function FieldVisitDetailPage({
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-xl font-['Instrument_Sans']">
+              <CardTitle className="text-xl">
                 Photos
               </CardTitle>
-              <Badge className="bg-blue-100 text-blue-700 text-base px-3 py-1">
+              <Badge className="bg-emerald-100 text-emerald-800 text-base px-3 py-1">
                 {evidenceCount}
               </Badge>
             </div>
@@ -338,7 +338,7 @@ export default function FieldVisitDetailPage({
             {!showCamera ? (
               <Button
                 onClick={() => setShowCamera(true)}
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full bg-emerald-600 hover:bg-emerald-700"
                 style={{ minHeight: "56px" }}
                 disabled={visit.status !== FieldVisitStatus.IN_PROGRESS}
               >

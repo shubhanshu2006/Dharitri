@@ -123,8 +123,8 @@ export default function AnalyticsDashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold font-['Instrument_Sans'] text-gray-900 flex items-center gap-3">
-                <BarChart3 className="h-8 w-8 text-blue-600" />
+              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                <BarChart3 className="h-8 w-8 text-emerald-600" />
                 Analytics Dashboard
               </h1>
               <p className="text-sm text-gray-600 mt-1">
@@ -238,8 +238,8 @@ export default function AnalyticsDashboardPage() {
         {/* Payment Analytics */}
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <TrendingUp className="h-6 w-6 text-purple-600" />
-            <h2 className="text-2xl font-bold font-['Instrument_Sans']">
+            <TrendingUp className="h-6 w-6 text-emerald-600" />
+            <h2 className="text-2xl font-bold">
               Payment Analytics
             </h2>
           </div>
@@ -247,7 +247,7 @@ export default function AnalyticsDashboardPage() {
             <TrendAnalysis
               title="Payments Completed"
               data={paymentData?.paymentsCompleted || []}
-              color="purple"
+              color="emerald"
               valueFormatter={formatNumber}
             />
             <TrendAnalysis
@@ -261,7 +261,7 @@ export default function AnalyticsDashboardPage() {
             <TrendAnalysis
               title="Payments Initiated"
               data={paymentData?.paymentsInitiated || []}
-              color="blue"
+              color="amber"
               valueFormatter={formatNumber}
             />
             <TrendAnalysis
@@ -276,8 +276,8 @@ export default function AnalyticsDashboardPage() {
         {/* R&R Trends */}
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <TrendingUp className="h-6 w-6 text-blue-600" />
-            <h2 className="text-2xl font-bold font-['Instrument_Sans']">
+            <TrendingUp className="h-6 w-6 text-amber-600" />
+            <h2 className="text-2xl font-bold">
               R&R Trends
             </h2>
           </div>
@@ -285,7 +285,7 @@ export default function AnalyticsDashboardPage() {
             <TrendAnalysis
               title="R&R Cases Created"
               data={rrData?.casesCreated || []}
-              color="blue"
+              color="amber"
               valueFormatter={formatNumber}
             />
             <TrendAnalysis
@@ -301,7 +301,7 @@ export default function AnalyticsDashboardPage() {
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <TrendingUp className="h-6 w-6 text-emerald-600" />
-            <h2 className="text-2xl font-bold font-['Instrument_Sans']">
+            <h2 className="text-2xl font-bold">
               Possession Trends
             </h2>
           </div>
@@ -325,7 +325,7 @@ export default function AnalyticsDashboardPage() {
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <TrendingUp className="h-6 w-6 text-amber-600" />
-            <h2 className="text-2xl font-bold font-['Instrument_Sans']">
+            <h2 className="text-2xl font-bold">
               Process Bottlenecks
             </h2>
           </div>

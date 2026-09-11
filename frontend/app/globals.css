@@ -65,7 +65,7 @@
 
   --font-sans: var(--font-inter);
   --font-serif: var(--font-instrument-serif);
-  --font-instrument-sans: var(--font-instrument-sans);
+  --font-instrument-sans: var(--font-inter);
 }
 
 * {

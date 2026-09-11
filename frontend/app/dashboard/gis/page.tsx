@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import maplibregl from "maplibre-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+import { toast } from "sonner";
 import { useProjects } from "@/hooks/useProjects";
 import {
   useProjectBoundary,
@@ -24,6 +25,7 @@ import {
   CardContent,
   Loading,
   Alert,
+  ConfirmModal,
 } from "@/components/ui";
 import { Map as MapIcon, Layers, X, Navigation } from "lucide-react";
 
@@ -41,10 +43,10 @@ const DRAW_STYLES = [
       "fill-color": [
         "case",
         ["==", ["get", "active"], "true"],
-        "#fbb03b",
-        "#3bb2d0",
+        "#f59e0b",
+        "#10b981",
       ],
-      "fill-opacity": 0.1,
+      "fill-opacity": 0.15,
     },
   },
   {
@@ -60,10 +62,10 @@ const DRAW_STYLES = [
       "line-color": [
         "case",
         ["==", ["get", "active"], "true"],
-        "#fbb03b",
-        "#3bb2d0",
+        "#f59e0b",
+        "#10b981",
       ],
-      "line-width": 2,
+      "line-width": 2.5,
     },
   },
   {
@@ -81,8 +83,8 @@ const DRAW_STYLES = [
       "circle-color": [
         "case",
         ["==", ["get", "active"], "true"],
-        "#fbb03b",
-        "#3bb2d0",
+        "#f59e0b",
+        "#10b981",
       ],
     },
   },
@@ -106,13 +108,13 @@ const DRAW_STYLES = [
       ["==", "meta", "vertex"],
       ["!=", "mode", "simple_select"],
     ],
-    paint: { "circle-radius": 5, "circle-color": "#fbb03b" },
+    paint: { "circle-radius": 5, "circle-color": "#f59e0b" },
   },
   {
     id: "gl-draw-midpoint",
     type: "circle",
     filter: ["all", ["==", "meta", "midpoint"]],
-    paint: { "circle-radius": 3, "circle-color": "#fbb03b" },
+    paint: { "circle-radius": 3, "circle-color": "#f59e0b" },
   },
 ];
 
@@ -127,6 +129,7 @@ function GISPageContent() {
   const [selectedParcel, setSelectedParcel] = useState<any>(null);
   const [showSidebar, setShowSidebar] = useState(true);
   const [showCoordinateEntry, setShowCoordinateEntry] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [drawnBoundary, setDrawnBoundary] = useState<
     BoundaryGeometry | undefined
   >();
@@ -237,8 +240,9 @@ function GISPageContent() {
         geometry,
         sourceType: "GEOJSON_UPLOAD",
       });
+      toast.success("Project boundary GeoJSON uploaded successfully");
     } catch (error) {
-      window.alert(
+      toast.error(
         error instanceof Error
           ? error.message
           : "Unable to upload boundary GeoJSON.",
@@ -251,18 +255,33 @@ function GISPageContent() {
   const handleSaveDrawnBoundary = async () => {
     if (!selectedProjectId || !drawnBoundary) return;
 
-    await uploadBoundary.mutateAsync({
-      geometry: drawnBoundary,
-      sourceType: "MAP_DRAWING",
-    });
-    setDrawnBoundary(undefined);
-    drawControl.current?.deleteAll();
+    try {
+      await uploadBoundary.mutateAsync({
+        geometry: drawnBoundary,
+        sourceType: "MAP_DRAWING",
+      });
+      toast.success("Drawn boundary saved to project");
+      setDrawnBoundary(undefined);
+      drawControl.current?.deleteAll();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to save boundary");
+    }
   };
 
-  const handleDeleteBoundary = async () => {
+  const handleDeleteBoundary = () => {
     if (!selectedProjectId) return;
-    if (!window.confirm("Delete this project's saved boundary?")) return;
-    await deleteBoundary.mutateAsync();
+    setShowDeleteConfirm(true);
+  };
+
+  const handleConfirmDeleteBoundary = async () => {
+    if (!selectedProjectId) return;
+    try {
+      await deleteBoundary.mutateAsync();
+      toast.success("Project boundary deleted successfully");
+      setShowDeleteConfirm(false);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to delete boundary");
+    }
   };
 
   const handleCoordinateGenerate = async (coordinates: Array<{ lat: number; lng: number }>) => {
@@ -291,8 +310,9 @@ function GISPageContent() {
         geometry: (await response.json()).data.geometry,
         sourceType: 'MANUAL_COORDINATE_ENTRY',
       });
+      toast.success("Boundary generated successfully from coordinates");
     } catch (error) {
-      window.alert(
+      toast.error(
         error instanceof Error
           ? error.message
           : 'Failed to generate boundary from coordinates'
@@ -301,10 +321,22 @@ function GISPageContent() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] gap-4">
+    <div className="flex h-[calc(100vh-6.5rem)] gap-4 font-sans">
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleConfirmDeleteBoundary}
+        title="Delete Project Boundary"
+        description="Are you sure you want to delete this project's boundary? All associated GIS boundary layers and parcel markers will be reset."
+        variant="danger"
+        confirmText="Delete Boundary"
+        isLoading={deleteBoundary.isPending}
+      />
+
       {/* Coordinate Entry Modal */}
       {showCoordinateEntry && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 backdrop-blur-xs p-4">
           <div className="max-w-2xl w-full">
             <CoordinateEntryForm
               onGenerate={handleCoordinateGenerate}
@@ -316,70 +348,76 @@ function GISPageContent() {
 
       {/* Sidebar */}
       {showSidebar && (
-        <div className="w-80 shrink-0 space-y-4 overflow-y-auto">
+        <div className="w-84 shrink-0 space-y-3.5 overflow-y-auto pr-1">
           {/* Header */}
-          <Card variant="elevated">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <MapIcon className="w-5 h-5 text-emerald-600" />
-                  GIS & Maps
-                </CardTitle>
-                <button
-                  onClick={() => setShowSidebar(false)}
-                  className="p-1 hover:bg-paper-dim rounded transition-colors"
-                >
-                  <X className="w-4 h-4 text-muted" />
-                </button>
+          <div className="bg-white rounded-2xl p-4 border border-paper-line/80 shadow-xs">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200/80">
+                  <MapIcon className="w-4 h-4" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-text tracking-tight">GIS Demarcation</h2>
+                  <p className="text-[11px] text-muted">Boundary ingestion & cadastral parcels</p>
+                </div>
               </div>
-            </CardHeader>
-          </Card>
+              <button
+                onClick={() => setShowSidebar(false)}
+                className="p-1.5 hover:bg-paper-dim rounded-lg transition-colors text-muted hover:text-text"
+                title="Collapse sidebar"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
 
-          {/* Project Selector */}
-          <Card variant="elevated">
-            <CardHeader>
-              <CardTitle className="text-base">Select Project</CardTitle>
-            </CardHeader>
-            <CardContent>
+          {/* Project Selector & Actions */}
+          <div className="bg-white rounded-2xl p-4 border border-paper-line/80 shadow-xs space-y-3.5">
+            <div>
+              <label htmlFor="gis-project-select" className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+                Target Project
+              </label>
               <select
+                id="gis-project-select"
                 value={selectedProjectId || ""}
                 onChange={(e) => handleProjectSelect(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-paper-line bg-white text-text focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-sm"
+                className="w-full px-3 py-2 rounded-xl border border-paper-line bg-paper/50 hover:bg-paper focus:bg-white text-text font-medium text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/80 focus:border-emerald-500 transition-all"
               >
-                <option value="">Select a project...</option>
+                <option value="">Select a project to inspect...</option>
                 {projects.map((project) => (
                   <option key={project.id} value={project.id}>
                     {project.name} ({project.projectCode || project.code || "No code"})
                   </option>
                 ))}
               </select>
+            </div>
 
-              {selectedProjectId && !hasBoundary && (
+            {selectedProjectId && (boundaryLoading || parcelsLoading) && (
+              <div className="py-3">
+                <Loading text="Retrieving telemetry layers..." size="sm" />
+              </div>
+            )}
+
+            {selectedProjectId && !hasBoundary && !boundaryLoading && (
+              <div className="space-y-2.5 pt-1 border-t border-paper-line/70">
+                <div className="p-3 bg-amber-50/80 border border-amber-200 rounded-xl text-xs text-amber-900 leading-relaxed">
+                  <p className="font-semibold text-amber-900 mb-0.5">Demarcation Required</p>
+                  Choose an ingestion mode below to define the statutory boundary corridor.
+                </div>
+
                 <button
                   type="button"
                   onClick={() => drawControl.current?.changeMode("draw_polygon")}
                   disabled={!map || uploadBoundary.isPending}
-                  className="mt-3 w-full rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                  Draw boundary on map
+                  <MapIcon className="w-3.5 h-3.5" />
+                  Draw Polygon on Map
                 </button>
-              )}
 
-              {selectedProjectId && (boundaryLoading || parcelsLoading) && (
-                <div className="mt-3">
-                  <Loading text="Loading project data..." size="sm" />
-                </div>
-              )}
-
-              {selectedProjectId && !hasBoundary && !boundaryLoading && (
-                <div className="mt-3 space-y-3">
-                  <Alert variant="warning">
-                    No boundary data available for this project.
-                  </Alert>
-                  <label className="block cursor-pointer rounded-lg border border-dashed border-emerald-300 bg-emerald-50 px-3 py-3 text-center text-sm font-medium text-emerald-700 hover:bg-emerald-100">
-                    {uploadBoundary.isPending
-                      ? "Uploading boundary..."
-                      : "Upload GeoJSON boundary"}
+                <div className="grid grid-cols-2 gap-2">
+                  <label className="cursor-pointer py-2.5 px-2 rounded-xl border border-dashed border-emerald-300 bg-emerald-50/50 hover:bg-emerald-50 text-center text-xs font-semibold text-emerald-800 transition-colors flex items-center justify-center">
+                    {uploadBoundary.isPending ? "Uploading..." : "Upload GeoJSON"}
                     <input
                       type="file"
                       accept=".geojson,application/geo+json,application/json"
@@ -388,54 +426,56 @@ function GISPageContent() {
                       onChange={handleBoundaryUpload}
                     />
                   </label>
+
                   <button
                     type="button"
                     onClick={() => setShowCoordinateEntry(true)}
-                    className="w-full rounded-lg border border-emerald-600 px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 transition-colors flex items-center justify-center gap-2"
+                    className="py-2.5 px-2 rounded-xl border border-emerald-200 bg-white hover:bg-emerald-50/50 text-xs font-semibold text-emerald-800 transition-colors flex items-center justify-center gap-1.5"
                   >
-                    <Navigation className="w-4 h-4" />
-                    Enter Coordinates
+                    <Navigation className="w-3.5 h-3.5 text-emerald-600" />
+                    Coordinates
                   </button>
                 </div>
-              )}
+              </div>
+            )}
 
-              {selectedProjectId && drawnBoundary && (
-                <div className="mt-3 space-y-2">
-                  <p className="text-sm text-emerald-700">
-                    Boundary drawn. Save it to this project.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={handleSaveDrawnBoundary}
-                    disabled={uploadBoundary.isPending}
-                    className="w-full rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
-                  >
-                    {uploadBoundary.isPending
-                      ? "Saving boundary..."
-                      : "Save drawn boundary"}
-                  </button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+            {selectedProjectId && drawnBoundary && (
+              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2.5">
+                <p className="text-xs font-semibold text-emerald-900">
+                  Polygon Boundary Drawn ({drawnBoundary.coordinates?.[0]?.length || 0} vertices)
+                </p>
+                <button
+                  type="button"
+                  onClick={handleSaveDrawnBoundary}
+                  disabled={uploadBoundary.isPending}
+                  className="w-full py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs transition-all disabled:opacity-50"
+                >
+                  {uploadBoundary.isPending ? "Persisting..." : "Commit Boundary to Project"}
+                </button>
+              </div>
+            )}
+          </div>
 
-          {/* Project Info */}
+          {/* Project Boundary Info */}
           {selectedProjectId && hasBoundary && (
-            <Card variant="elevated">
-              <CardHeader>
-                <CardTitle className="text-base">Project Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-muted">Boundary Features</span>
-                  <span className="font-medium text-text">
+            <div className="bg-white rounded-2xl p-4 border border-paper-line/80 shadow-xs space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-paper-line/60">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted">Corridor Telemetry</h3>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                  Active
+                </span>
+              </div>
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center justify-between p-2 rounded-lg bg-paper/50">
+                  <span className="text-muted">Boundary Geometries</span>
+                  <span className="font-bold text-text font-mono">
                     {boundary?.features?.length || 0}
                   </span>
                 </div>
                 {parcels && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted">Total Parcels</span>
-                    <span className="font-medium text-text">
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-paper/50">
+                    <span className="text-muted">Demarcated Parcels</span>
+                    <span className="font-bold text-emerald-700 font-mono">
                       {parcels.features?.length || 0}
                     </span>
                   </div>
@@ -444,77 +484,59 @@ function GISPageContent() {
                   type="button"
                   onClick={handleDeleteBoundary}
                   disabled={deleteBoundary.isPending}
-                  className="mt-3 w-full rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+                  className="mt-1 w-full rounded-xl border border-red-200/80 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-50 transition-colors disabled:opacity-50"
                 >
-                  {deleteBoundary.isPending
-                    ? "Deleting boundary..."
-                    : "Delete saved boundary"}
+                  Delete Demarcated Boundary
                 </button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
 
-          {/* Selected Parcel Details */}
+          {/* Selected Parcel Popup in Sidebar */}
           {selectedParcel && (
-            <Card variant="elevated">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">Selected Parcel</CardTitle>
-                  <button
-                    onClick={() => setSelectedParcel(null)}
-                    className="p-1 hover:bg-paper-dim rounded transition-colors"
-                  >
-                    <X className="w-4 h-4 text-muted" />
-                  </button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ParcelPopup
-                  parcel={selectedParcel}
-                  onClose={() => setSelectedParcel(null)}
-                />
-              </CardContent>
-            </Card>
+            <div className="bg-white rounded-2xl p-4 border border-paper-line/80 shadow-md">
+              <ParcelPopup
+                parcel={selectedParcel}
+                onClose={() => setSelectedParcel(null)}
+              />
+            </div>
           )}
 
-          {/* Layer Controls */}
-          <Card variant="elevated">
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Layers className="w-4 h-4" />
-                Map Layers
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="w-4 h-4 rounded border-paper-line text-emerald-600 focus:ring-emerald-500"
-                />
-                <span className="text-sm text-text">Project Boundary</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="w-4 h-4 rounded border-paper-line text-emerald-600 focus:ring-emerald-500"
-                />
-                <span className="text-sm text-text">Land Parcels</span>
-              </label>
-            </CardContent>
-          </Card>
+          {/* Map Layer Toggles */}
+          <div className="bg-white rounded-2xl p-4 border border-paper-line/80 shadow-xs space-y-2.5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-muted flex items-center gap-1.5 mb-2">
+              <Layers className="w-3.5 h-3.5" />
+              Layer Visibility
+            </h3>
+            <label className="flex items-center justify-between p-2 rounded-lg hover:bg-paper/60 cursor-pointer transition-colors">
+              <span className="text-xs font-medium text-text">Corridor Boundary</span>
+              <input
+                type="checkbox"
+                defaultChecked
+                className="w-4 h-4 rounded border-paper-line text-emerald-600 focus:ring-emerald-500"
+              />
+            </label>
+            <label className="flex items-center justify-between p-2 rounded-lg hover:bg-paper/60 cursor-pointer transition-colors">
+              <span className="text-xs font-medium text-text">Cadastral Parcels</span>
+              <input
+                type="checkbox"
+                defaultChecked
+                className="w-4 h-4 rounded border-paper-line text-emerald-600 focus:ring-emerald-500"
+              />
+            </label>
+          </div>
         </div>
       )}
 
-      {/* Map Container */}
-      <div className="flex-1 relative rounded-xl overflow-hidden border border-paper-line">
+      {/* Map Canvas */}
+      <div className="flex-1 relative rounded-2xl overflow-hidden border border-paper-line/80 shadow-inner bg-paper/40">
         {!showSidebar && (
           <button
             onClick={() => setShowSidebar(true)}
-            className="absolute top-4 left-4 z-10 p-2 bg-white rounded-lg shadow-lg border border-paper-line hover:bg-paper-dim transition-colors"
+            className="absolute top-4 left-4 z-10 p-2.5 bg-white/95 backdrop-blur-md rounded-xl shadow-md border border-paper-line hover:bg-paper transition-all"
+            title="Expand Controls"
           >
-            <Layers className="w-5 h-5 text-text" />
+            <Layers className="w-4 h-4 text-text" />
           </button>
         )}
 

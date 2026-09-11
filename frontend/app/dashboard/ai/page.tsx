@@ -26,8 +26,8 @@ export default function AIInsightsIndexPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="flex items-center gap-3 text-3xl font-bold text-text font-instrument-sans">
-          <Brain className="h-8 w-8 text-purple-600" />
+        <h1 className="flex items-center gap-3 text-3xl font-bold text-text">
+          <Brain className="h-8 w-8 text-emerald-600" />
           AI Insights
         </h1>
         <p className="mt-1 text-muted">
