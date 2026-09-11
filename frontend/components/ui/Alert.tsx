@@ -41,14 +41,14 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(
       success: "bg-emerald-50 border-emerald-200 text-emerald-800",
       warning: "bg-amber-50 border-amber-200 text-amber-800",
       danger: "bg-red-50 border-red-200 text-red-800",
-      info: "bg-blue-50 border-blue-200 text-blue-800",
+      info: "bg-emerald-50/80 border-emerald-200 text-emerald-900",
     };
 
     const iconColors = {
       success: "text-emerald-600",
       warning: "text-amber-600",
       danger: "text-red-600",
-      info: "text-blue-600",
+      info: "text-emerald-700",
     };
 
     return (

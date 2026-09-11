@@ -60,9 +60,9 @@ export const ROLE_COLORS: Record<Role, { bg: string; text: string; border: strin
     border: "border-amber-200",
   },
   [Role.LAND_ACQUISITION_OFFICER]: {
-    bg: "bg-blue-100",
-    text: "text-blue-700",
-    border: "border-blue-200",
+    bg: "bg-emerald-100",
+    text: "text-emerald-800",
+    border: "border-emerald-200",
   },
   [Role.PROJECT_IMPLEMENTING_AGENCY]: {
     bg: "bg-green-100",
