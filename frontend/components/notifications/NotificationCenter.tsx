@@ -109,7 +109,7 @@ export function NotificationCenter({ onClose }: NotificationCenterProps) {
       <div className="max-h-[480px] overflow-y-auto">
         {isLoading ? (
           <div className="p-8 text-center text-gray-500">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-2"></div>
             Loading notifications...
           </div>
         ) : notifications.length === 0 ? (
@@ -141,7 +141,7 @@ export function NotificationCenter({ onClose }: NotificationCenterProps) {
                   }
                   className={cn(
                     "w-full p-4 text-left transition-colors hover:bg-gray-50",
-                    !isRead && "bg-blue-50/50"
+                    !isRead && "bg-emerald-50/50"
                   )}
                 >
                   <div className="flex gap-3">
@@ -169,7 +169,7 @@ export function NotificationCenter({ onClose }: NotificationCenterProps) {
                           {notification.title}
                         </h4>
                         {!isRead && (
-                          <span className="flex-shrink-0 w-2 h-2 bg-blue-600 rounded-full mt-1"></span>
+                          <span className="flex-shrink-0 w-2 h-2 bg-emerald-600 rounded-full mt-1"></span>
                         )}
                       </div>
                       <p
@@ -197,7 +197,7 @@ export function NotificationCenter({ onClose }: NotificationCenterProps) {
         <div className="p-3 border-t border-gray-200 bg-gray-50 rounded-b-lg">
           <Button
             variant="ghost"
-            className="w-full text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+            className="w-full text-sm font-medium text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50"
             onClick={() => {
               router.push("/dashboard/notifications");
               onClose();

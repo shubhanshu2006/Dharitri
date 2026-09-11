@@ -150,7 +150,7 @@ export function GPSCapture({
                     location.accuracy <= 10
                       ? "bg-emerald-100 text-emerald-700"
                       : location.accuracy <= 20
-                      ? "bg-blue-100 text-blue-700"
+                      ? "bg-emerald-50 text-emerald-800"
                       : location.accuracy <= 50
                       ? "bg-amber-100 text-amber-700"
                       : "bg-red-100 text-red-700"

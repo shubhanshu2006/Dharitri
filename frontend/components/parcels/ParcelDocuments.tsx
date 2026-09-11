@@ -10,7 +10,9 @@ import {
   Loading,
   Badge,
   Alert,
+  ConfirmModal,
 } from "@/components/ui";
+import { toast } from "sonner";
 import { CanView } from "@/components/auth";
 import { Permission } from "@/lib/constants/permissions";
 import {
@@ -92,15 +94,27 @@ export function ParcelDocuments({ parcelId }: ParcelDocumentsProps) {
     }
   };
 
-  const handleDelete = async (documentId: string) => {
-    if (!confirm("Are you sure you want to delete this document?")) return;
+  const [docToDelete, setDocToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
+  const confirmDelete = async () => {
+    if (!docToDelete) return;
+    setIsDeleting(true);
     try {
-      await deleteDocument.mutateAsync(documentId);
+      await deleteDocument.mutateAsync(docToDelete);
+      toast.success("Document deleted successfully");
+      setDocToDelete(null);
       refetch();
     } catch (error) {
       console.error("Delete failed:", error);
+      toast.error("Failed to delete document. Please try again.");
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const handleDelete = (documentId: string) => {
+    setDocToDelete(documentId);
   };
 
   const handleDownload = (document: any) => {
@@ -341,6 +355,18 @@ export function ParcelDocuments({ parcelId }: ParcelDocumentsProps) {
           </div>
         )}
       </CardContent>
+
+      <ConfirmModal
+        isOpen={Boolean(docToDelete)}
+        onClose={() => setDocToDelete(null)}
+        onConfirm={confirmDelete}
+        title="Delete Document"
+        description="Are you sure you want to delete this document from the parcel record? This action cannot be undone."
+        confirmText="Delete Document"
+        cancelText="Cancel"
+        variant="danger"
+        isLoading={isDeleting}
+      />
     </Card>
   );
 }

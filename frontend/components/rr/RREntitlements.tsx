@@ -33,7 +33,7 @@ export function RREntitlements({ entitlements }: RREntitlementsProps) {
       case EntitlementStatus.APPROVED:
         return "bg-green-100 text-green-700 border-green-200";
       case EntitlementStatus.ASSESSED:
-        return "bg-blue-100 text-blue-700 border-blue-200";
+        return "bg-amber-100 text-amber-800 border-amber-200";
       case EntitlementStatus.DISPUTED:
         return "bg-red-100 text-red-700 border-red-200";
       default:
@@ -48,7 +48,7 @@ export function RREntitlements({ entitlements }: RREntitlementsProps) {
           <CardHeader>
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <CardTitle className="text-lg font-['Instrument_Sans']">
+                <CardTitle className="text-lg">
                   {entitlement.entitlementType}
                 </CardTitle>
               </div>
@@ -63,7 +63,7 @@ export function RREntitlements({ entitlements }: RREntitlementsProps) {
           <CardContent>
             <div className="grid gap-4">
               {/* Assessed Value */}
-              <div className="border-l-2 border-blue-500 pl-4">
+              <div className="border-l-2 border-amber-500 pl-4">
                 <p className="text-sm text-gray-600 mb-1">Assessed Value</p>
                 <pre className="text-sm bg-gray-50 p-2 rounded">
                   {JSON.stringify(entitlement.assessedValue, null, 2)}

@@ -52,7 +52,7 @@ export function PossessionEvidence({
 
   const getFileIcon = (type: string) => {
     if (type.startsWith("image/")) {
-      return <Image className="h-5 w-5 text-blue-600" />;
+      return <Image className="h-5 w-5 text-emerald-600" />;
     }
     return <FileText className="h-5 w-5 text-gray-600" />;
   };
@@ -61,7 +61,7 @@ export function PossessionEvidence({
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="font-['Instrument_Sans']">
+          <CardTitle>
             Evidence & Documentation
           </CardTitle>
           <Badge className="bg-gray-100 text-gray-700">

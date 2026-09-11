@@ -33,3 +33,4 @@ export {
   type LoadingProps,
 } from "./Loading";
 export { ErrorBoundary, ErrorMessage, EmptyState } from "./ErrorBoundary";
+export { ConfirmModal, type ConfirmModalProps, type ConfirmVariant } from "./ConfirmModal";
