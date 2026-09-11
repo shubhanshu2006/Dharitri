@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "node dist/src/server.js",
     "type-check": "tsc --noEmit",
+    "db:seed:ghaziabad-varanasi": "tsx src/database/seeds/ghaziabad-varanasi-parcels.seed.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
