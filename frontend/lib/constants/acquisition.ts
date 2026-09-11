@@ -40,14 +40,14 @@ export const ACQUISITION_STATUS_COLORS: Record<
     border: "border-gray-200",
   },
   [AcquisitionStatus.SUBMITTED]: {
-    bg: "bg-cyan-100",
-    text: "text-cyan-700",
-    border: "border-cyan-200",
+    bg: "bg-stone-100",
+    text: "text-stone-700",
+    border: "border-stone-200",
   },
   [AcquisitionStatus.UNDER_REVIEW]: {
-    bg: "bg-blue-100",
-    text: "text-blue-700",
-    border: "border-blue-200",
+    bg: "bg-emerald-50",
+    text: "text-emerald-800",
+    border: "border-emerald-200",
   },
   [AcquisitionStatus.VERIFICATION_PENDING]: {
     bg: "bg-amber-100",

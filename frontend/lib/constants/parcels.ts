@@ -32,14 +32,14 @@ export const PARCEL_STATUS_COLORS: Record<
     border: "border-gray-200",
   },
   [ParcelStatus.IDENTIFIED]: {
-    bg: "bg-cyan-100",
-    text: "text-cyan-700",
-    border: "border-cyan-200",
+    bg: "bg-stone-100",
+    text: "text-stone-700",
+    border: "border-stone-200",
   },
   [ParcelStatus.VERIFIED]: {
-    bg: "bg-blue-100",
-    text: "text-blue-700",
-    border: "border-blue-200",
+    bg: "bg-emerald-100",
+    text: "text-emerald-700",
+    border: "border-emerald-200",
   },
   [ParcelStatus.IN_ACQUISITION]: {
     bg: "bg-amber-100",

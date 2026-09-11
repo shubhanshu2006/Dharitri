@@ -7,14 +7,14 @@ export const NAV_LINKS = [
   { label: "Home", href: "#hero" },
   { label: "How It Works", href: "#how-it-works" },
   { label: "Features", href: "#features" },
-  { label: "Technology", href: "#technology" },
+  // { label: "Technology", href: "#technology" },
   { label: "Impact", href: "#impact" },
   { label: "Explore", href: "#footer" },
 ] as const;
 
 export const FOOTER_LINKS = [
   { label: "Features", href: "#features" },
-  { label: "Technology", href: "#technology" },
+  // { label: "Technology", href: "#technology" },
   { label: "Impact", href: "#impact" },
 ] as const;
 

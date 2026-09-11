@@ -57,9 +57,9 @@ export const POSSESSION_STATUS_COLORS: Record<
     border: "border-gray-300",
   },
   [PossessionStatus.NOTICE_ISSUED]: {
-    bg: "bg-blue-100",
-    text: "text-blue-700",
-    border: "border-blue-300",
+    bg: "bg-orange-100",
+    text: "text-orange-700",
+    border: "border-orange-300",
   },
   [PossessionStatus.READY]: {
     bg: "bg-amber-100",
