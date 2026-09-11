@@ -66,10 +66,10 @@ export function BottleneckChart({
       case "LOW":
       default:
         return {
-          bg: "bg-blue-50",
-          text: "text-blue-700",
-          border: "border-blue-500",
-          barBg: "bg-blue-500",
+          bg: "bg-emerald-50",
+          text: "text-emerald-700",
+          border: "border-emerald-500",
+          barBg: "bg-emerald-500",
           label: "Low Impact",
         };
     }
@@ -79,7 +79,7 @@ export function BottleneckChart({
     <Card className={className}>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-['Instrument_Sans'] flex items-center gap-2">
+          <CardTitle className="text-xl flex items-center gap-2">
             <AlertTriangle className="h-6 w-6 text-amber-600" />
             {title}
           </CardTitle>

@@ -141,7 +141,7 @@ export function DocumentUpload({
 
   const getFileIcon = (file: File) => {
     if (file.type.startsWith("image/")) {
-      return <Image className="h-8 w-8 text-blue-600" />;
+      return <Image className="h-8 w-8 text-emerald-600" />;
     }
     return <FileText className="h-8 w-8 text-gray-600" />;
   };
@@ -149,7 +149,7 @@ export function DocumentUpload({
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle className="font-['Instrument_Sans']">
+        <CardTitle>
           Upload Document
         </CardTitle>
       </CardHeader>

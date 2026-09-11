@@ -174,8 +174,8 @@ export function DocumentVersionHistory({
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3 flex-1">
-                  <div className="p-2 bg-blue-50 rounded">
-                    <FileText className="h-5 w-5 text-blue-600" />
+                  <div className="p-2 bg-emerald-50 rounded">
+                    <FileText className="h-5 w-5 text-emerald-600" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { X, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 import {
   AcquisitionStatus,
   ACQUISITION_STATUS_LABELS,
@@ -32,12 +33,12 @@ export function StatusTransitionDialog({
 
   const handleTransition = async () => {
     if (!selectedStatus) {
-      alert("Please select a status to transition to");
+      toast.warning("Please select a status to transition to");
       return;
     }
 
     if (!reason.trim()) {
-      alert("Please provide a reason for this transition");
+      toast.warning("Please provide a reason for this transition");
       return;
     }
 

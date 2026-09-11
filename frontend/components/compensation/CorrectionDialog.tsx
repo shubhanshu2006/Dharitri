@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button, Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
 import { X, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 
 interface CorrectionDialogProps {
   onRequestCorrection: (reason: string) => Promise<void>;
@@ -19,7 +20,7 @@ export function CorrectionDialog({
 
   const handleSubmit = async () => {
     if (!reason.trim()) {
-      alert("Please provide a reason for requesting correction");
+      toast.warning("Please provide a reason for requesting correction");
       return;
     }
 

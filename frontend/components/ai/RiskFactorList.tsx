@@ -79,7 +79,7 @@ export function RiskFactorList({
                     ? "bg-red-50 border-red-500"
                     : isMedium
                     ? "bg-amber-50 border-amber-500"
-                    : "bg-blue-50 border-blue-500"
+                    : "bg-emerald-50 border-emerald-500"
                 )}
               >
                 <div className="flex items-start gap-3">
@@ -90,7 +90,7 @@ export function RiskFactorList({
                         ? "bg-red-100"
                         : isMedium
                         ? "bg-amber-100"
-                        : "bg-blue-100"
+                        : "bg-emerald-100"
                     )}
                   >
                     <Icon
@@ -100,7 +100,7 @@ export function RiskFactorList({
                           ? "text-red-600"
                           : isMedium
                           ? "text-amber-600"
-                          : "text-blue-600"
+                          : "text-emerald-600"
                       )}
                     />
                   </div>
@@ -113,7 +113,7 @@ export function RiskFactorList({
                             ? "text-red-900"
                             : isMedium
                             ? "text-amber-900"
-                            : "text-blue-900"
+                            : "text-emerald-900"
                         )}
                       >
                         {factor.name
@@ -123,12 +123,12 @@ export function RiskFactorList({
                       </h4>
                       <span
                         className={cn(
-                          "text-xl font-bold font-['Instrument_Sans']",
+                          "text-xl font-bold",
                           isHigh
                             ? "text-red-700"
                             : isMedium
                             ? "text-amber-700"
-                            : "text-blue-700"
+                            : "text-emerald-700"
                         )}
                       >
                         +{Math.round(contributionPercentage)}
@@ -141,7 +141,7 @@ export function RiskFactorList({
                           ? "text-red-700"
                           : isMedium
                           ? "text-amber-700"
-                          : "text-blue-700"
+                          : "text-emerald-700"
                       )}
                     >
                       {factor.explanation}
@@ -157,7 +157,7 @@ export function RiskFactorList({
                               ? "bg-red-600"
                               : isMedium
                               ? "bg-amber-600"
-                              : "bg-blue-600"
+                              : "bg-emerald-600"
                           )}
                           style={{ width: `${Math.min(contributionPercentage, 100)}%` }}
                         />

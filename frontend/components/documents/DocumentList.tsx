@@ -75,9 +75,9 @@ export function DocumentList({
     const iconName = getFileIcon(mimeType);
     switch (iconName) {
       case "Image":
-        return <div className="p-2 bg-blue-100 rounded-lg"><FileText className="h-5 w-5 text-blue-600" /></div>;
+        return <div className="p-2 bg-amber-100 rounded-lg"><FileText className="h-5 w-5 text-amber-700" /></div>;
       case "Table":
-        return <div className="p-2 bg-green-100 rounded-lg"><FileText className="h-5 w-5 text-green-600" /></div>;
+        return <div className="p-2 bg-emerald-100 rounded-lg"><FileText className="h-5 w-5 text-emerald-700" /></div>;
       default:
         return <div className="p-2 bg-gray-100 rounded-lg"><FileText className="h-5 w-5 text-gray-600" /></div>;
     }
@@ -86,7 +86,7 @@ export function DocumentList({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-['Instrument_Sans']">
+        <CardTitle>
           Documents
           <Badge className="ml-2 bg-gray-100 text-gray-700">
             {documents.length}

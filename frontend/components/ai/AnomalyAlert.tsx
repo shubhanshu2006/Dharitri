@@ -77,7 +77,7 @@ export function AnomalyAlert({
               </Badge>
             )}
             {severityCounts.LOW > 0 && (
-              <Badge className="bg-blue-100 text-blue-700">
+              <Badge className="bg-emerald-100 text-emerald-800">
                 {severityCounts.LOW} Low
               </Badge>
             )}

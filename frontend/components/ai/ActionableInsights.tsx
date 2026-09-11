@@ -63,9 +63,9 @@ export function ActionableInsights({
       case "LOW":
       default:
         return {
-          bg: "bg-blue-100",
-          text: "text-blue-700",
-          border: "border-blue-300",
+          bg: "bg-emerald-100",
+          text: "text-emerald-800",
+          border: "border-emerald-300",
           label: "Low Priority",
         };
     }
@@ -74,7 +74,7 @@ export function ActionableInsights({
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle className="text-xl font-['Instrument_Sans'] flex items-center gap-2">
+        <CardTitle className="text-xl flex items-center gap-2">
           <Lightbulb className="h-6 w-6 text-amber-600" />
           {title}
         </CardTitle>
@@ -147,7 +147,7 @@ export function ActionableInsights({
               <p className="text-xs text-gray-600 mt-1">Medium Priority</p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-blue-700">
+              <p className="text-2xl font-bold text-emerald-700">
                 {actions.filter((a) => a.priority === "LOW").length}
               </p>
               <p className="text-xs text-gray-600 mt-1">Low Priority</p>

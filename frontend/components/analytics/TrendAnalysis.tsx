@@ -17,10 +17,10 @@ interface TrendAnalysisProps {
 
 const COLOR_CONFIGS = {
   blue: {
-    line: "stroke-blue-600",
-    area: "fill-blue-500/20",
-    dot: "fill-blue-600",
-    bg: "bg-blue-500",
+    line: "stroke-emerald-600",
+    area: "fill-emerald-500/20",
+    dot: "fill-emerald-600",
+    bg: "bg-emerald-500",
   },
   emerald: {
     line: "stroke-emerald-600",
@@ -41,17 +41,17 @@ const COLOR_CONFIGS = {
     bg: "bg-red-500",
   },
   purple: {
-    line: "stroke-purple-600",
-    area: "fill-purple-500/20",
-    dot: "fill-purple-600",
-    bg: "bg-purple-500",
+    line: "stroke-emerald-700",
+    area: "fill-emerald-600/20",
+    dot: "fill-emerald-700",
+    bg: "bg-emerald-700",
   },
 };
 
 export function TrendAnalysis({
   title,
   data,
-  color = "blue",
+  color = "emerald",
   valueFormatter = (v) => formatNumber(v),
   showTrend = true,
   className,
