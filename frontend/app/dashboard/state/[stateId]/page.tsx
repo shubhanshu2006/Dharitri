@@ -206,19 +206,19 @@ export default function StateDashboardPage({
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-xl font-['Instrument_Sans']">
+              <CardTitle className="text-xl">
                 Payment Status
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-amber-50 rounded-lg">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Total Payments</p>
-                  <p className="text-2xl font-bold text-blue-700">
+                  <p className="text-2xl font-bold text-amber-700">
                     {formatNumber(metrics.payments.totalPayments)}
                   </p>
                 </div>
-                <TrendingUp className="h-8 w-8 text-blue-600" />
+                <TrendingUp className="h-8 w-8 text-amber-600" />
               </div>
 
               <div className="flex items-center justify-between p-4 bg-emerald-50 rounded-lg">

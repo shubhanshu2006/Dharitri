@@ -185,7 +185,7 @@ export default function RRCaseDetailPage({
 
               {rrCase.assessmentCompletedAt && (
                 <div className="flex items-center gap-3 text-sm">
-                  <CheckCircle className="h-4 w-4 text-blue-600" />
+                  <CheckCircle className="h-4 w-4 text-emerald-600" />
                   <span className="text-gray-600">Assessment Completed:</span>
                   <span className="font-medium">
                     {formatDate(rrCase.assessmentCompletedAt)}

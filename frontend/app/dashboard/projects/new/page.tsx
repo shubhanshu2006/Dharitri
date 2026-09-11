@@ -24,6 +24,7 @@ import {
 } from "@/components/ui";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 // Validation schema - matches backend exactly
 const projectSchema = z.object({
@@ -98,9 +99,11 @@ export default function NewProjectPage() {
       delete (payload as any).requiredAreaHectares;
       
       const result = await createProject.mutateAsync(payload);
+      toast.success(`Project ${result.projectCode || "created"} initiated successfully`);
       router.push(`/dashboard/projects/${result.id}`);
     } catch (error) {
       console.error("Failed to create project:", error);
+      toast.error("Failed to create project. Please verify inputs.");
     }
   };
 
@@ -113,7 +116,7 @@ export default function NewProjectPage() {
             Back to Projects
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold text-text font-instrument-sans mt-4">
+        <h1 className="text-3xl font-bold text-text mt-4">
           Create New Project
         </h1>
         <p className="text-muted mt-1">

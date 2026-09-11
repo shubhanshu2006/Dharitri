@@ -158,7 +158,7 @@ export default function ProjectDashboardPage({
                     metrics.project.status === "COMPLETED"
                       ? "bg-emerald-100 text-emerald-700"
                       : metrics.project.status === "ACTIVE"
-                      ? "bg-blue-100 text-blue-700"
+                      ? "bg-emerald-100 text-emerald-800"
                       : "bg-gray-100 text-gray-700"
                   }
                 >
@@ -234,8 +234,8 @@ export default function ProjectDashboardPage({
               <Card className="h-full">
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl font-['Instrument_Sans'] flex items-center gap-2">
-                      <Brain className="h-6 w-6 text-purple-600" />
+                    <CardTitle className="text-xl flex items-center gap-2">
+                      <Brain className="h-6 w-6 text-emerald-600" />
                       Risk Insights
                     </CardTitle>
                     <Link href={`/dashboard/ai/${projectId}`}>
@@ -422,9 +422,9 @@ export default function ProjectDashboardPage({
               />
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-blue-50 rounded-lg">
+                <div className="p-3 bg-amber-50 rounded-lg">
                   <p className="text-xs text-gray-600 mb-1">In Progress</p>
-                  <p className="text-lg font-bold text-blue-700">
+                  <p className="text-lg font-bold text-amber-700">
                     {formatCurrency(metrics.payments.initiatedAmount)}
                   </p>
                 </div>
@@ -641,15 +641,15 @@ export default function ProjectDashboardPage({
               )}
 
               {metrics.cases.verificationPending > 0 && (
-                <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
-                  <Clock className="h-5 w-5 text-blue-600 mt-0.5" />
+                <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                  <Clock className="h-5 w-5 text-amber-600 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-blue-900">
+                    <p className="font-semibold text-amber-900">
                       {metrics.cases.verificationPending} Case
                       {metrics.cases.verificationPending > 1 ? "s" : ""} Pending
                       Verification
                     </p>
-                    <p className="text-sm text-blue-700 mt-1">
+                    <p className="text-sm text-amber-700 mt-1">
                       Accelerate verification to maintain project momentum
                     </p>
                   </div>
@@ -721,7 +721,7 @@ export default function ProjectDashboardPage({
           <Card>
             <CardHeader>
               <CardTitle className="text-lg font-['Instrument_Sans'] flex items-center gap-2">
-                <Target className="h-5 w-5 text-blue-600" />
+                <Target className="h-5 w-5 text-emerald-600" />
                 Next Actions
               </CardTitle>
             </CardHeader>
@@ -729,7 +729,7 @@ export default function ProjectDashboardPage({
               <ul className="space-y-2 text-sm text-gray-700">
                 {metrics.cases.verificationPending > 0 && (
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600">•</span>
+                    <span className="text-emerald-600">•</span>
                     <span>
                       Complete verification for {metrics.cases.verificationPending}{" "}
                       pending cases
@@ -738,7 +738,7 @@ export default function ProjectDashboardPage({
                 )}
                 {metrics.rr.inProgress > 0 && (
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600">•</span>
+                    <span className="text-emerald-600">•</span>
                     <span>
                       Monitor progress of {metrics.rr.inProgress} R&R cases
                     </span>
@@ -746,7 +746,7 @@ export default function ProjectDashboardPage({
                 )}
                 {metrics.possession.pending > 0 && (
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600">•</span>
+                    <span className="text-emerald-600">•</span>
                     <span>
                       Complete {metrics.possession.pending} pending possession records
                     </span>
@@ -754,7 +754,7 @@ export default function ProjectDashboardPage({
                 )}
                 {metrics.milestones.total > metrics.milestones.completed && (
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600">•</span>
+                    <span className="text-emerald-600">•</span>
                     <span>
                       Track remaining{" "}
                       {metrics.milestones.total - metrics.milestones.completed}{" "}

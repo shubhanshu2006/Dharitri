@@ -282,14 +282,14 @@ export default function NotificationPreferencesPage() {
       )}
 
       {/* Info Card */}
-      <Card className="p-4 bg-blue-50 border-blue-200">
+      <Card className="p-4 bg-emerald-50 border-emerald-200">
         <div className="flex gap-3">
-          <Bell className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+          <Bell className="h-5 w-5 text-emerald-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="font-semibold text-blue-900 mb-1">
+            <h3 className="font-semibold text-emerald-900 mb-1">
               About Notifications
             </h3>
-            <p className="text-sm text-blue-800">
+            <p className="text-sm text-emerald-800">
               Choose how you want to be notified for each type of event. In-app
               notifications appear in the notification center, emails are sent
               to your registered email, and SMS messages are sent to your mobile
@@ -317,7 +317,7 @@ export default function NotificationPreferencesPage() {
                     <div className="flex gap-1">
                       <button
                         onClick={() => enableAll("inApp")}
-                        className="text-xs text-blue-600 hover:underline"
+                        className="text-xs text-emerald-600 hover:underline"
                       >
                         Enable all
                       </button>
@@ -340,7 +340,7 @@ export default function NotificationPreferencesPage() {
                     <div className="flex gap-1">
                       <button
                         onClick={() => enableAll("email")}
-                        className="text-xs text-blue-600 hover:underline"
+                        className="text-xs text-emerald-600 hover:underline"
                       >
                         Enable all
                       </button>
@@ -363,7 +363,7 @@ export default function NotificationPreferencesPage() {
                     <div className="flex gap-1">
                       <button
                         onClick={() => enableAll("sms")}
-                        className="text-xs text-blue-600 hover:underline"
+                        className="text-xs text-emerald-600 hover:underline"
                       >
                         Enable all
                       </button>
@@ -395,7 +395,7 @@ export default function NotificationPreferencesPage() {
                       type="checkbox"
                       checked={pref.inApp}
                       onChange={() => togglePreference(index, "inApp")}
-                      className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 accent-emerald-600"
                     />
                   </td>
                   <td className="px-6 py-4 text-center">
@@ -403,7 +403,7 @@ export default function NotificationPreferencesPage() {
                       type="checkbox"
                       checked={pref.email}
                       onChange={() => togglePreference(index, "email")}
-                      className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 accent-emerald-600"
                     />
                   </td>
                   <td className="px-6 py-4 text-center">
@@ -411,7 +411,7 @@ export default function NotificationPreferencesPage() {
                       type="checkbox"
                       checked={pref.sms}
                       onChange={() => togglePreference(index, "sms")}
-                      className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 accent-emerald-600"
                     />
                   </td>
                 </tr>

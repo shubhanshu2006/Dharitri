@@ -7,6 +7,7 @@ import { Clock, Mail, User, Building2, Briefcase, MessageSquare, LogOut, MapPin 
 import { useCurrentUser } from "@/hooks/useUser";
 import { useStates, useDistricts } from "@/hooks/useLocations";
 import { api } from "@/lib/api";
+import { toast } from "sonner";
 
 export default function OnboardingPage() {
   const { user: clerkUser } = useUser();
@@ -114,9 +115,10 @@ export default function OnboardingPage() {
       // Update user's access request
       await api.patch(`/auth/me/access-request`, requestData);
       setSubmitted(true);
+      toast.success("Access request submitted successfully");
     } catch (error) {
       console.error("Failed to submit access request:", error);
-      alert("Failed to submit request. Please try again.");
+      toast.error("Failed to submit request. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

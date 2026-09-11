@@ -254,7 +254,7 @@ export default function ParcelsPage() {
                       </div>
 
                       <div className="flex-shrink-0">
-                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center shadow-sm">
                           <MapPin className="w-6 h-6 text-white" />
                         </div>
                       </div>

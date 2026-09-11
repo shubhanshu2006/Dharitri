@@ -164,7 +164,7 @@ export default function NotificationsPage() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
               <option value="ALL">All Types</option>
               <option value={NotificationType.PROJECT_CREATED}>
@@ -201,7 +201,7 @@ export default function NotificationsPage() {
       {isLoading ? (
         <Card className="p-12">
           <div className="text-center text-gray-500">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
             Loading notifications...
           </div>
         </Card>
@@ -232,7 +232,7 @@ export default function NotificationsPage() {
                 key={notification.id}
                 className={cn(
                   "transition-all hover:shadow-md cursor-pointer",
-                  !isRead && "bg-blue-50/30 border-blue-200"
+                  !isRead && "bg-emerald-50/40 border-emerald-200"
                 )}
                 onClick={() =>
                   handleNotificationClick(
@@ -270,7 +270,7 @@ export default function NotificationsPage() {
                             {notification.title}
                           </h3>
                           {!isRead && (
-                            <span className="flex-shrink-0 px-2 py-0.5 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">
+                            <span className="flex-shrink-0 px-2 py-0.5 text-xs font-medium text-emerald-800 bg-emerald-100 rounded-full">
                               New
                             </span>
                           )}
@@ -292,7 +292,7 @@ export default function NotificationsPage() {
                           <span className="text-xs font-medium text-gray-500">
                             Related to:
                           </span>
-                          <span className="text-xs text-blue-600 font-medium">
+                          <span className="text-xs text-emerald-700 font-medium">
                             {notification.entityType.replace(/_/g, " ")}
                           </span>
                         </div>
